@@ -1,0 +1,574 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>온체인 시장과 규제</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  /* Layout: single reading column, study-deck sections with collapsible Q&A and two project dossiers */
+  :root {
+    --bg: #f4f6fa;
+    --panel: #ffffff;
+    --panel-2: #eef1f7;
+    --border: #d9dfeb;
+    --text: #172033;
+    --text-dim: #5a6479;
+    --accent: #1f8f89;
+    --accent-soft: rgba(31,143,137,0.10);
+    --accent-2: #4461d6;
+    --accent-2-soft: rgba(68,97,214,0.10);
+    --gold: #b57a0d;
+    --gold-soft: rgba(181,122,13,0.10);
+    --red: #c24545;
+    --red-soft: rgba(194,69,69,0.08);
+    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1420; --panel: #161d2e; --panel-2: #1c2438; --border: #2a3350;
+      --text: #e7ecf5; --text-dim: #9aa5b8;
+      --accent: #5ec6c0; --accent-soft: rgba(94,198,192,0.12);
+      --accent-2: #7c9fff; --accent-2-soft: rgba(124,159,255,0.14);
+      --gold: #f2b950; --gold-soft: rgba(242,185,80,0.10);
+      --red: #ef7373; --red-soft: rgba(239,115,115,0.10);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1420; --panel: #161d2e; --panel-2: #1c2438; --border: #2a3350;
+    --text: #e7ecf5; --text-dim: #9aa5b8;
+    --accent: #5ec6c0; --accent-soft: rgba(94,198,192,0.12);
+    --accent-2: #7c9fff; --accent-2-soft: rgba(124,159,255,0.14);
+    --gold: #f2b950; --gold-soft: rgba(242,185,80,0.10);
+    --red: #ef7373; --red-soft: rgba(239,115,115,0.10);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    padding-inline: 16px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding-block: 0 72px; }
+  a { color: var(--accent); }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; border-radius: 6px; }
+
+  header.hero { padding-block: 48px 24px; border-bottom: 1px solid var(--border); }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em;
+    color: var(--accent); text-transform: uppercase; margin: 0 0 12px;
+  }
+  h1.title { font-size: clamp(30px, 6vw, 46px); margin: 0 0 12px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
+  .subtitle { color: var(--text-dim); font-size: 15px; margin: 0; max-width: 62ch; }
+
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  nav.toc a {
+    text-decoration: none; color: var(--text); background: var(--panel);
+    border: 1px solid var(--border); padding: 7px 14px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 500; display: inline-flex; gap: 8px; align-items: baseline;
+  }
+  nav.toc a span { font-family: var(--font-mono); font-size: 11px; color: var(--accent); }
+  nav.toc a:hover { border-color: var(--accent); color: var(--accent); }
+
+  section.block { margin-top: 52px; scroll-margin-top: 20px; }
+  .section-label { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.12em; color: var(--accent-2); text-transform: uppercase; margin: 0 0 4px; }
+  section.block h2 { font-size: 23px; margin: 0 0 4px; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  .section-desc { color: var(--text-dim); font-size: 14px; margin: 0 0 20px; }
+
+  .qcard { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .qcard summary { list-style: none; cursor: pointer; padding: 16px 18px; display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 15px; user-select: none; }
+  .qcard summary::-webkit-details-marker { display: none; }
+  .qnum {
+    flex: none; width: 30px; height: 30px; border-radius: 8px;
+    background: var(--accent-2-soft); color: var(--accent-2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+  }
+  .qtext { min-width: 0; }
+  .chevron { margin-left: auto; color: var(--text-dim); transition: transform 0.2s ease; flex: none; }
+  .qcard[open] > summary .chevron { transform: rotate(90deg); }
+  .qcard .body { padding: 0 18px 20px 62px; color: var(--text-dim); font-size: 14.5px; }
+  .qcard .body p { margin: 0 0 12px; max-width: 68ch; }
+  .qcard .body p:last-child { margin-bottom: 0; }
+  .qcard .body strong, .qcard .body b { color: var(--text); }
+
+  .warn-box { background: var(--red-soft); border: 1px solid var(--border); border-left: 3px solid var(--red); border-radius: 8px; padding: 14px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
+  .warn-box strong { color: var(--red); }
+
+  .project-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+  .project-card h3 { margin: 0 0 6px; font-size: 19px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot.pyth { background: #8a5cf6; }
+  .dot.api3 { background: #3b82f6; }
+  .badge { font-family: var(--font-mono); font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+  .project-lede { font-size: 14px; color: var(--text-dim); margin: 0 0 10px; }
+  .as-of { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; font-family: var(--font-mono); }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 12px 0 20px; }
+  .stat-tile { background: var(--panel-2); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+  .stat-label { font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+  .stat-value { font-family: var(--font-mono); font-size: 21px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .stat-tile.gold .stat-value { color: var(--gold); }
+  .stat-tile.purple .stat-value { color: var(--accent-2); }
+  .stat-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 4px; line-height: 1.55; }
+
+  .quick-summary { background: var(--panel-2); border-radius: 10px; padding: 14px 16px; margin: 4px 0 18px; font-size: 13.5px; color: var(--text-dim); }
+  .quick-summary ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; }
+  .quick-summary b { color: var(--text); }
+
+  .faq-group { margin: 0 0 20px; }
+  .faq-title { font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px; }
+  .qcard.mini { background: var(--panel-2); border-color: transparent; margin-bottom: 8px; }
+  .qcard.mini summary { padding: 12px 16px; font-size: 14px; font-weight: 500; gap: 10px; }
+  .qcard.mini .body { padding: 0 16px 16px; font-size: 13.5px; }
+  .qcard.mini .body ul { margin: 8px 0 12px; padding-left: 18px; display: grid; gap: 8px; }
+  .fine { font-size: 12.5px; opacity: 0.85; }
+
+  .flow { display: flex; flex-direction: column; margin: 18px 0 0; }
+  .flow-step { background: var(--panel-2); border-radius: 10px; padding: 12px 16px; }
+  .step-tag { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .step-text { font-size: 14px; color: var(--text); }
+  .step-text b { color: var(--accent); }
+  .flow-step.security { background: var(--gold-soft); border: 1px solid var(--gold); }
+  .flow-step.security .step-tag { color: var(--gold); }
+  .flow-arrow { display: flex; justify-content: center; color: var(--text-dim); font-size: 16px; padding: 2px 0; }
+
+  .divider { height: 1px; background: var(--border); margin: 52px 0 0; }
+  .compare-note { font-size: 13.5px; color: var(--text-dim); margin-top: 6px; padding: 14px 16px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 6px; }
+  .compare-note b { color: var(--text); }
+
+  .sources { font-size: 12.5px; color: var(--text-dim); margin-top: 40px; padding: 14px 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+  .sources summary { cursor: pointer; font-weight: 700; color: var(--text); }
+  .sources ul { margin: 10px 0 0; padding-left: 18px; }
+  .sources a { color: var(--accent-2); word-break: break-all; }
+
+  footer { color: var(--text-dim); font-size: 12.5px; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 560px) {
+    .qcard .body { padding-left: 18px; }
+    .project-card { padding: 18px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .chevron { transition: none; } }
+
+  .dot.usdt { background: #26a17b; }
+  .dot.usdc { background: #2775ca; }
+  .dot.us { background: #3b82f6; }
+  .dot.kr { background: #e0475b; }
+  .table-wrap { overflow-x: auto; margin: 14px 0 4px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+  table.cmp { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 13.5px; }
+  table.cmp th, table.cmp td { padding: 11px 14px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+  table.cmp tr:last-child td { border-bottom: 0; }
+  table.cmp thead th { background: var(--panel-2); font-weight: 700; color: var(--text); }
+  table.cmp tbody th { color: var(--text-dim); font-weight: 500; white-space: nowrap; font-family: var(--font-mono); font-size: 12px; }
+  table.cmp td { color: var(--text); }
+  .player-list { display: grid; gap: 10px; margin: 0 0 4px; }
+  .player { background: var(--panel-2); border-radius: 10px; padding: 12px 16px; min-width: 0; }
+  .player-name { font-weight: 700; font-size: 14.5px; color: var(--text); margin-bottom: 2px; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+  .player-name .when { font-family: var(--font-mono); font-size: 11px; color: var(--accent-2); font-weight: 600; }
+  .player p { margin: 0; font-size: 13.5px; color: var(--text-dim); }
+  .player p b { color: var(--text); }
+  .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 12px 0; }
+  .rule { background: var(--panel-2); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .rule-k { font-weight: 700; color: var(--text); font-size: 14px; margin-bottom: 2px; }
+  .rule p { margin: 0; font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .calc { font-family: var(--font-mono); font-size: 12.5px; background: var(--panel-2); border-radius: 8px; padding: 10px 12px; color: var(--text); margin: 8px 0 12px; overflow-x: auto; white-space: nowrap; }
+  .src { font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+
+  .stage { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; min-width: 0; }
+  .stage-tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; margin-bottom: 8px; }
+  .stage.easy .stage-tag { background: var(--accent-2-soft); color: var(--accent-2); }
+  .stage.report .stage-tag { background: var(--gold-soft); color: var(--gold); }
+  .stage.now .stage-tag { background: var(--accent-soft); color: var(--accent); }
+  .stage.report { border-left: 3px solid var(--gold); }
+  .stage.now { border-left: 3px solid var(--accent); }
+  .stage p, .stage li { font-size: 14.5px; color: var(--text-dim); }
+  .stage p { margin: 0 0 10px; max-width: 70ch; }
+  .stage p:last-child { margin-bottom: 0; }
+  .stage ul { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 6px; }
+  .stage ul:last-child { margin-bottom: 0; }
+  .stage b, .stage strong { color: var(--text); }
+  .term { display: grid; gap: 8px; margin: 0 0 4px; }
+  .term-row { display: grid; grid-template-columns: minmax(96px, 150px) 1fr; gap: 12px; padding: 10px 12px; background: var(--panel-2); border-radius: 8px; }
+  .term-row dt { font-weight: 700; color: var(--text); font-size: 14px; }
+  .term-row dd { margin: 0; font-size: 14px; color: var(--text-dim); min-width: 0; }
+  @media (max-width: 520px) { .term-row { grid-template-columns: 1fr; gap: 2px; } }
+  .verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin: 6px 0 0; padding: 12px 16px; border-radius: 10px; background: var(--panel-2); font-size: 14px; color: var(--text); }
+  .pill { font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { background: var(--accent-soft); color: var(--accent); }
+  .pill.half { background: var(--gold-soft); color: var(--gold); }
+  .pill.prog { background: var(--accent-2-soft); color: var(--accent-2); }
+  .footnote { margin-top: 14px; padding: 14px 16px; border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-dim); }
+  .footnote b { color: var(--text); }
+  .footnote p { margin: 0 0 8px; max-width: 72ch; }
+  .footnote p:last-child { margin-bottom: 0; }
+  .sub-h { font-size: 15.5px; font-weight: 700; color: var(--text); margin: 18px 0 8px; }
+  .timeline { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 0; }
+  .timeline li { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .timeline li:last-child { border-bottom: 0; }
+  .timeline .d { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); padding-top: 2px; }
+  .timeline li.fail .d, .timeline li.fail b { color: var(--red); }
+  .discuss { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .discuss li { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .discuss .q { font-weight: 700; color: var(--text); font-size: 14.5px; margin-bottom: 6px; display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
+  .discuss p { margin: 0; font-size: 13.5px; color: var(--text-dim); }
+  .route { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--text-dim); margin-top: 16px; }
+  .route span.n { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; color: var(--text); }
+  .route span.n.me { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Stablecoin Study · Part 4 · Onchain</p>
+    <h1 class="title">온체인: 시장과 규제</h1>
+    <p class="subtitle">쟁글 「스테이블코인, Web3.0의 미래를 열다」 (Hashed Open Research, 2023.10) 3-3·3-4장 정리. 주제마다 <b>쉽게 풀면 → 리포트(2023)의 주장 → 지금은(2026.10)</b> 순서로 봐요. 원화는 1달러 = 1,400원으로 환산한 대략치예요.<br>원문: <a href="https://xangle.io/research/detail/1568" target="_blank" rel="noopener">xangle.io/research/detail/1568</a></p>
+
+    <div class="route" aria-label="스터디 진행 순서">
+      <span class="n">1 수요 · 누가 쓰나</span>→<span class="n">2 유통 · 어디서 쓰나</span>→<span class="n">3 발행 · 누가 발행하나</span>→<span class="n me">4 온체인 · 돈이 어디로 흐르나</span>
+    </div>
+
+    <nav class="toc" aria-label="목차">
+      <a href="#t1"><span>01</span>거래소</a>
+      <a href="#t2"><span>02</span>스테이블코인 경쟁</a>
+      <a href="#t3"><span>03</span>이자 금지 규제</a>
+      <a href="#t4"><span>04</span>토큰화 국채·RWA</a>
+      <a href="#t5"><span>05</span>시가총액 전망</a>
+      <a href="#t6"><span>06</span>전망 판정</a>
+    </nav>
+  </header>
+
+  <section class="block" id="intro">
+    <p class="section-label">00 · Intro</p>
+    <h2>4번 파트가 다루는 질문</h2>
+    <p class="section-desc" style="max-width:68ch;">"스테이블코인이라는 돈이 생긴 뒤, 그 돈은 어디로 흘러갔을까?"를 봐요. 돈이 머무는 곳은 크게 네 군데예요. 코인을 사고파는 <b>거래소</b>, 여러 스테이블코인 중 <b>어떤 코인</b>, 이자를 주는 <b>투자 상품</b>, 그리고 이 모든 걸 정하는 <b>규제</b>예요.</p>
+  </section>
+
+  <!-- 01 -->
+  <section class="block" id="t1">
+    <p class="section-label">01 · Exchanges</p>
+    <h2>거래소: 돈이 거래소에서 내 지갑으로 옮겨갈까?</h2>
+    <p class="section-desc">리포트 3-3장</p>
+
+    <div class="stage easy">
+      <span class="stage-tag">쉽게 풀면</span>
+      <dl class="term">
+        <div class="term-row"><dt>CEX (중앙화 거래소)</dt><dd>업비트, 바이낸스처럼 회사가 운영하는 거래소예요. 은행처럼 회사가 내 코인을 대신 보관해줘요. 편하지만 회사가 망하거나 해킹당하면 내 코인도 위험해요 (아래 FTX 사례).</dd></div>
+        <div class="term-row"><dt>개인지갑</dt><dd>내 코인을 회사에 맡기지 않고 내가 직접 보관하는 지갑이에요. 은행 계좌 대신 집 금고에 현금을 두는 것과 비슷해요.</dd></div>
+        <div class="term-row"><dt>DEX (탈중앙화 거래소)</dt><dd>회사 없이 프로그램(스마트 컨트랙트)이 거래를 연결해줘요. 내 지갑을 바로 연결해서 거래하고, 끝나면 코인은 다시 내 지갑에 있어요.</dd></div>
+      </dl>
+    </div>
+
+    <div class="stage report">
+      <span class="stage-tag">리포트의 주장 · 2023</span>
+      <ul>
+        <li>텔레그램, 페이팔 같은 앱에 지갑이 들어가면서 사람들이 거래소에 맡기지 않고 <b>직접 보관하는 쪽으로 이동</b>할 거라고 봤어요. 그러면 CEX는 수익이 줄고, 거래도 지갑 쪽으로 흩어진다고 했어요.</li>
+        <li>근거는 체이널리시스 자료예요. 2022.1~2023.4 사이 활발히 쓰인 거래소 수는 약 20% 줄었고, 개인지갑 수는 2021년 이후 급증했어요.</li>
+        <li>앱 지갑은 BTC, ETH, 스테이블코인만 지원해요. 그래서 "실제로 쓰이는 코인"으로 수요가 몰릴 거라고 봤어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage now">
+      <span class="stage-tag">지금은 · 2026.10</span>
+      <div class="stat-grid" style="margin-top:4px;">
+        <div class="stat-tile"><div class="stat-label">DEX 거래량 / CEX 거래량</div><div class="stat-value">24.1%</div><div class="stat-sub">2026년 7월 · 2019년 집계 이후 최고</div></div>
+        <div class="stat-tile purple"><div class="stat-label">2024년 같은 비율</div><div class="stat-value">10% 미만</div><div class="stat-sub">2년 만에 두 배 이상</div></div>
+        <div class="stat-tile gold"><div class="stat-label">여전히 CEX에서</div><div class="stat-value">약 3/4</div><div class="stat-sub">거래의 대부분은 아직 거래소</div></div>
+      </div>
+      <ul>
+        <li>새 코인은 DEX에서 몇 분 만에 거래되지만 CEX 상장은 심사 때문에 몇 주씩 걸려요. 솔라나, Base 같은 빠르고 싼 블록체인이 커진 것도 컸어요.</li>
+        <li>CEX가 무너진 건 아니에요. 일부 CEX는 아예 DEX 기능을 붙이려 하고 있어요.</li>
+      </ul>
+    </div>
+
+    <div class="verdict"><span class="pill prog">진행 중</span>방향은 맞았어요. DEX가 빠르게 따라오지만 아직 CEX가 중심이에요.</div>
+
+    <div class="footnote">
+      <p><b>＊ FTX 파산 사태 (2022년 11월)</b></p>
+      <p>FTX는 한때 세계 2~3위였던 중앙화 거래소예요. 2022년 11월 초, 같은 창업자(샘 뱅크먼-프리드)가 세운 투자회사 알라메다의 재무가 FTX가 직접 만든 FTT 코인으로 채워져 있다는 보도가 나왔어요. 곧이어 바이낸스가 보유한 FTT를 팔겠다고 발표했어요.</p>
+      <p>불안해진 고객들이 사흘 만에 약 60억 달러(8.4조 원)를 빼가려 했지만 FTX는 내줄 돈이 없었어요. 고객이 맡긴 돈을 몰래 알라메다로 넘겨 투자에 써버렸기 때문이에요. 구멍은 약 80억 달러(11.2조 원)였어요. FTX는 11월 11일 파산했고, 샘 뱅크먼-프리드는 2024년 3월 징역 25년을 선고받았어요.</p>
+      <p>"거래소에 맡긴 코인은 내 코인이 아닐 수 있다"는 걸 보여준 사건이고, 개인지갑 수요가 커진 직접적인 계기예요. 리포트가 나온 2023년은 이 사태 직후였어요.</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 02 -->
+  <section class="block" id="t2">
+    <p class="section-label">02 · Competition</p>
+    <h2>스테이블코인끼리의 경쟁: 어떤 코인이 이길까?</h2>
+    <p class="section-desc">리포트 3-4장</p>
+
+    <div class="stage easy">
+      <span class="stage-tag">쉽게 풀면</span>
+      <p>스테이블코인은 하나가 아니에요. 테더의 USDT, 서클의 USDC, 페이팔의 PYUSD처럼 여러 회사가 각자 "1달러짜리 코인"을 발행해요. 소비자에게는 다 1달러라서 비슷해 보여요. 그래서 승부는 두 가지로 갈려요. <b>얼마나 많은 곳에서 받아주느냐</b>(편의점마다 되는 페이가 이기듯)와 <b>"금고에 진짜 달러가 있다"는 걸 얼마나 믿을 수 있느냐</b>예요.</p>
+      <p><b>보유 주소</b>는 블록체인 지갑 하나하나를 말해요. 은행 계좌 수와 비슷한 개념이에요.</p>
+    </div>
+
+    <div class="stage report">
+      <span class="stage-tag">리포트의 주장 · 2023</span>
+      <ul>
+        <li>이용자가 많은 플랫폼을 가진 <b>USDC와 PYUSD</b>가 유리할 거라고 봤어요.</li>
+        <li><b>규제를 잘 지키고 투명하게 공개하는 발행사가 이긴다</b>고 했어요. 근거로 2023년 2월 미국 규제당국이 BUSD 발행을 중단시킨 사례, 같은 해 5월 MakerDAO가 규제 불안이 있는 USDP를 준비금에서 뺀 사례를 들었어요.</li>
+        <li>스테이블코인을 1달러 이상 가진 지갑은 약 2,500만 개로, 미국 5대 은행 계좌 수와 맞먹었어요. 그중 80%가 1~100달러(1,400원~14만 원)만 들고 있었어요. 그래서 은행을 잘 못 쓰는 사람들에게 금융 서비스를 줄 잠재력이 있다고 봤어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage now">
+      <span class="stage-tag">지금은 · 2026.10</span>
+      <ul>
+        <li>BUSD는 결국 사라졌어요. USDC는 꾸준히 커서 실제 온체인 거래의 60~70%를 차지해요.</li>
+        <li>하지만 규모 1위는 여전히 <b>USDT(약 60%)</b>예요. 규제를 지킨다고 바로 1등이 되지는 않았어요.</li>
+        <li>리포트가 "플랫폼을 가진 곳이 유리하다"고 했는데, 2026년에는 <b>결제사와 은행들이 아예 연합을 만들어</b> 직접 뛰어들었어요.</li>
+      </ul>
+
+      <p class="sub-h">새 도전자들</p>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th scope="col">이름</th><th scope="col">누가</th><th scope="col">언제</th><th scope="col">어떤 코인</th></tr></thead>
+          <tbody>
+            <tr><td><b>OUSD</b> (Open USD)</td><td>Stripe 주도. 창립 파트너 Coinbase, Mastercard, Shopify, Stripe, Visa 외 200여 곳</td><td>2026.6 발표<br><b>2026.9.30 출시</b></td><td>기업용 달러 스테이블코인</td></tr>
+            <tr><td><b>글로벌 은행 21곳</b></td><td>Citi, Goldman Sachs, BofA, UBS, Deutsche Bank, MUFG 등</td><td>2026.9 발표</td><td>은행 공동 달러 코인</td></tr>
+            <tr><td><b>The Clearing House</b></td><td>JPMorgan, BofA, Citi</td><td>2026.6 공개</td><td>은행 예금토큰 네트워크 (스테이블코인 아님)</td></tr>
+            <tr><td><b>Qivalis</b></td><td>유럽 은행 12곳</td><td>2026 하반기 예정</td><td>유로 스테이블코인</td></tr>
+            <tr><td><b>KlarnaUSD</b></td><td>Klarna (후불결제 핀테크)</td><td>2025.11 출시</td><td>핀테크 자체 발행 코인</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <details class="qcard mini" open style="margin-top:12px;">
+        <summary><span class="qtext">OUSD는 뭐가 다를까?</span><span class="chevron">▸</span></summary>
+        <div class="body">
+          <ul>
+            <li><b>수익 구조를 뒤집었어요.</b> 테더나 서클은 금고 속 달러를 국채에 넣어 나오는 이자를 거의 다 가져가요. OUSD 발행사는 작은 거래 수수료만 받고, OUSD를 많이 유통시킨 파트너 기업이 보상과 회사 지분을 나눠 가져요. "우리가 퍼뜨린 코인의 이익은 우리가 나누자"는 연합이에요.</li>
+            <li><b>발행과 준비금</b>: 발행은 Stripe가 2024년 약 11억 달러(1.5조 원)에 인수한 Bridge가 맡아요. 준비금은 BlackRock, BNY, Lead Bank에 보관하고 매달 증명을 공개해요.</li>
+            <li><b>어디서 쓰나</b>: 이더리움, 솔라나, Base, Tempo 4개 체인에서 돌아가고, 출시하자마자 Coinbase, Kraken, Uniswap에서 거래됐어요. Stripe 가맹점은 OUSD로 대금을 받고, 스테이블코인 카드로 결제하고, 100여 개국으로 송금할 수 있어요. 소비자가 이름을 알고 쓰기보다는 기업 결제와 정산 밑에 깔리는 코인이에요.</li>
+            <li><b>시장 반응</b>: 6월 발표 직후 서클 주가가 13% 떨어졌어요.</li>
+            <li><b>로드맵</b>: 공식 로드맵은 아직 없어요. 밝힌 계획은 지분 대부분을 시간을 두고 파트너들에게 나눠주는 것과 매달 준비금 증명을 공개하는 것뿐이에요. 파트너들이 USDC 같은 다른 코인도 계속 지원하기로 해서 같은 연합 안에서도 경쟁해야 하고, EU(EEA)에서는 홍보가 제한돼요.</li>
+          </ul>
+          <p><b>은행 21곳 컨소시엄 로드맵</b>: 2026년 하반기 공동 회사 설립 → 2027년 상반기 달러 코인 출시 → 이후 유로화 등 G7 통화로 확대.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="verdict"><span class="pill half">반은 맞음</span>규제를 지키는 쪽이 성장한 건 맞지만, 테더의 아성은 생각보다 단단했어요.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 03 -->
+  <section class="block" id="t3">
+    <p class="section-label">03 · Regulation</p>
+    <h2>이자 금지 규제: 스테이블코인에는 왜 이자를 못 줄까?</h2>
+    <p class="section-desc">리포트 3-4장 (MiCA)</p>
+
+    <div class="stage easy">
+      <span class="stage-tag">쉽게 풀면</span>
+      <ul>
+        <li>은행에 돈을 맡기면 이자를 줘요. 은행이 그 돈을 대출로 굴려서 벌기 때문이에요.</li>
+        <li>스테이블코인 발행사도 금고의 달러를 국채에 넣어두고 이자를 받아요. 그런데 그 이자를 코인 보유자에게 나눠주는 걸 <b>법으로 막았어요</b>.</li>
+        <li>스테이블코인이 이자까지 주면 사람들이 은행 예금을 빼서 옮겨갈 거예요. 그러면 은행이 대출해줄 돈이 줄고, 중앙은행이 금리로 경제를 조절하는 힘도 약해져요. 이걸 막으려는 거예요.</li>
+        <li><b>MiCA</b>는 유럽연합(EU)의 가상자산 법이에요. 미국 GENIUS Act보다 먼저 만들어졌어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage report">
+      <span class="stage-tag">리포트의 주장 · 2023</span>
+      <ul>
+        <li>2023년 4월 입법된 MiCA가 스테이블코인 발행사의 이자 지급을 금지했어요.</li>
+        <li>은행 예금은 이자를 받는데 스테이블코인은 0%가 되니까, <b>돈이 이자가 나오는 다른 온체인 상품(토큰화 국채)으로 옮겨갈 것</b>이라고 봤어요.</li>
+        <li>당시 미국 3개월 국채 수익률은 5.5%, 스테이블코인 예치 수익은 평균 3%였어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage now">
+      <span class="stage-tag">지금은 · 2026.10</span>
+      <ul>
+        <li>MiCA는 2024년부터 본격 시행됐어요. 유럽에서는 스테이블코인 리워드가 중단됐고, 인가를 받지 않은 USDT는 EU 거래소에서 퇴출됐어요.</li>
+        <li>미국도 <b>GENIUS Act(2025.7)</b>로 같은 규칙을 만들었어요. 발행사는 코인을 보유했다는 이유만으로 이자를 줄 수 없어요.</li>
+        <li>리포트 예측대로 돈이 움직였어요. 2026년 5~7월 스테이블코인 시장이 4년 만에 처음 줄었어요. 원인 중 하나가 놀던 돈이 이자 나오는 토큰화 국채로 옮겨간 거예요. 토큰화 국채 펀드는 3월 약 110억 달러에서 약 160억 달러(22.4조 원)로 커졌어요.</li>
+      </ul>
+
+      <p class="sub-h">GENIUS Act와 CLARITY 법안, 같은 법일까?</p>
+      <p><b>둘은 별개의 법이에요.</b> CLARITY 안에 GENIUS가 들어 있는 게 아니에요.</p>
+      <div class="table-wrap">
+        <table class="cmp">
+          <thead><tr><th scope="col"></th><th scope="col">GENIUS Act</th><th scope="col">CLARITY Act</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">한 줄 요약</th><td><b>스테이블코인이라는 "돈"</b>에 대한 법</td><td><b>코인 시장 전체</b>의 교통정리 법</td></tr>
+            <tr><th scope="row">다루는 것</th><td>누가 발행하나, 준비금은 어떻게 쌓나, 이자 금지</td><td>어떤 코인이 증권(SEC 담당)이고 어떤 코인이 상품(CFTC 담당)인지, 거래소 규칙</td></tr>
+            <tr><th scope="row">비유</th><td>상품권 발행 규칙</td><td>상품권을 포함한 시장 전체의 감독 기관 정리</td></tr>
+            <tr><th scope="row">상태</th><td><b>2025.7.18 서명, 이미 법</b></td><td><b>아직 국회 통과 못 함</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="sub-h">이자 문제가 CLARITY로 넘어온 이유</p>
+      <ul>
+        <li>GENIUS Act는 <b>발행사</b>만 이자를 못 주게 막았어요.</li>
+        <li>그런데 Coinbase 같은 거래소는 "USDC를 들고 있으면 리워드 연 몇 %"를 줘요. 서클이 준비금 이자 수익을 Coinbase와 나누고, Coinbase가 그 돈을 고객에게 돌려주는 구조예요. 이름만 리워드일 뿐 사실상 이자예요.</li>
+        <li>은행권은 "예금이 빠져나가는 우회로"라며 막아야 한다고 주장해요. 이 싸움이 CLARITY 법안으로 옮겨왔어요.</li>
+        <li>상원 타협안(2026.5)의 내용은 이래요. <b>그냥 들고만 있는 잔액에 주는 이자성 리워드는 금지</b>하고, <b>결제나 거래 같은 활동에 주는 리워드는 허용</b>해요. 은행권은 금지를 더 강화하라고 요구하고 있어요.</li>
+      </ul>
+
+      <p class="sub-h">CLARITY 진행 상황</p>
+      <ul class="timeline">
+        <li><span class="d">2025.07.17</span><span>하원 통과 (294 대 134)</span></li>
+        <li><span class="d">2026.01.29</span><span>상원 농업위원회 통과 (12 대 11)</span></li>
+        <li><span class="d">2026.05.14</span><span>상원 은행위원회 통과 (15 대 9)</span></li>
+        <li class="fail"><span class="d">2026.09.15</span><span><b>상원 본회의 절차 표결 부결 (49 대 50, 60표 필요)</b>. 무산 원인은 이자 문제보다 공직자 코인 보유 윤리 조항이었어요. 민주당은 트럼프 대통령 일가의 코인 사업에 제대로 적용되지 않는다며 반대했어요.</span></li>
+        <li><span class="d">이후</span><span>폐기된 건 아니에요. 재심의 동의안이 제출돼 있고, 11월 3일 중간선거 이후 남은 회기가 현실적인 마지막 기회로 꼽혀요. 예측시장은 올해 안 통과 가능성을 10%대 후반으로 봐요. 그사이 SEC와 CFTC는 자체 규칙을 만들고 있어요.</span></li>
+      </ul>
+    </div>
+
+    <div class="verdict"><span class="pill ok">맞음</span>스테이블코인은 "쓰는 돈"(결제·송금·거래용 현금), 토큰화 국채는 "모아두는 돈"(이자 받는 온체인 예금)으로 역할이 갈렸어요. 발행사 이자 금지(GENIUS)는 확정됐지만, 거래소 리워드라는 우회로를 막을지(CLARITY)는 아직 진행 중이에요.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 04 -->
+  <section class="block" id="t4">
+    <p class="section-label">04 · Tokenized Treasuries · RWA</p>
+    <h2>토큰화 국채와 RWA: 이자 받는 돈은 어디로 갔을까?</h2>
+    <p class="section-desc">리포트 3-4장</p>
+
+    <div class="stage easy">
+      <span class="stage-tag">쉽게 풀면</span>
+      <dl class="term">
+        <div class="term-row"><dt>RWA (실물자산)</dt><dd>Real World Assets. 국채, 부동산, 회사채처럼 현실 세계의 자산이에요.</dd></div>
+        <div class="term-row"><dt>토큰화</dt><dd>그 자산의 소유권을 블록체인 위의 토큰으로 만드는 거예요. 상품권처럼 쪼개서 주고받을 수 있게 돼요.</dd></div>
+        <div class="term-row"><dt>토큰화 국채</dt><dd>미국 국채를 담은 펀드를 토큰으로 만든 거예요. 스테이블코인처럼 지갑에 넣고 24시간 옮길 수 있는데 <b>국채 이자가 붙어요</b>. "이자 나오는 스테이블코인"처럼 쓰여요.</dd></div>
+      </dl>
+    </div>
+
+    <div class="stage report">
+      <span class="stage-tag">리포트의 주장 · 2023</span>
+      <ul>
+        <li>2023년 9월 기준 온체인 RWA는 24억 달러(3.4조 원)였어요. 그중 토큰화 미국 국채는 6.7억 달러(9,380억 원)로, 연초보다 4.9배 커지며 가장 빠르게 성장했어요.</li>
+        <li>상위 3개 발행사(Ondo, Franklin Templeton, Matrixdock)가 85%를 차지했어요.</li>
+        <li>이자 금지 때문에 앞으로 더 커질 거라고 봤어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage now">
+      <span class="stage-tag">지금은 · 2026.10</span>
+      <div class="table-wrap" style="margin-top:4px;">
+        <table class="cmp">
+          <thead><tr><th scope="col"></th><th scope="col">2023.9 (리포트)</th><th scope="col">2026.10 (현재)</th><th scope="col">변화</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">온체인 RWA 전체</th><td>24억 달러 (3.4조 원)</td><td>462억 달러 (64.7조 원)</td><td><b>약 19배</b></td></tr>
+            <tr><th scope="row">토큰화 미국 국채</th><td>6.7억 달러 (9,380억 원)</td><td>약 149억 달러 (20.8조 원)</td><td><b>약 22배</b></td></tr>
+            <tr><th scope="row">수익률</th><td>약 5.5%</td><td>약 3.6%</td><td>금리 인하 영향</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="margin-top:12px;">
+        <li>가장 큰 변화는 세계 최대 자산운용사 <b>블랙록</b>이에요. BUIDL이라는 토큰화 국채 펀드(약 22.5억 달러, 3.2조 원)가 이 시장의 대표 상품이 됐어요. 2023년 리포트에는 없던 이름이에요. Ondo의 USDY(약 23억 달러), Franklin Templeton의 BENJI도 계속 커졌어요.</li>
+        <li>금리가 내려가 수익률은 3%대로 떨어졌지만, 이자가 0%인 스테이블코인보다는 나아서 돈이 계속 들어오고 있어요.</li>
+      </ul>
+    </div>
+
+    <div class="verdict"><span class="pill ok">맞음</span>리포트 예상보다도 빠르게 컸어요.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 05 -->
+  <section class="block" id="t5">
+    <p class="section-label">05 · Market Cap</p>
+    <h2>시가총액 전망: "5,000억~1조 달러"는 맞았나?</h2>
+    <p class="section-desc">리포트 3-4장</p>
+
+    <div class="stage easy">
+      <span class="stage-tag">쉽게 풀면</span>
+      <dl class="term">
+        <div class="term-row"><dt>시가총액</dt><dd>발행된 스테이블코인을 모두 더한 금액이에요. 1개 = 1달러라서 "사람들이 스테이블코인에 넣어둔 돈의 총액"과 같아요. <b>통장 잔고</b>라고 보면 돼요.</dd></div>
+        <div class="term-row"><dt>거래량</dt><dd>그 돈이 실제로 얼마나 많이 오갔는지예요. <b>통장에서 오간 금액</b>이라고 보면 돼요.</dd></div>
+      </dl>
+    </div>
+
+    <div class="stage report">
+      <span class="stage-tag">리포트의 주장 · 2023</span>
+      <p>2023년 당시 주요 스테이블코인 시총은 약 1,500억 달러(210조 원)였어요. 리포트는 이렇게 계산했어요.</p>
+      <div class="calc">모바일 결제 시장 2.1조 달러(2022) × 매년 15% 성장 → 2028년 약 5조 달러</div>
+      <ul>
+        <li>스테이블코인 비중이 6%에서 <b>10%</b>가 되면 → <b>5,000억 달러 (700조 원)</b>, 지금의 약 3배</li>
+        <li>비중이 <b>20%</b>가 되면 → <b>1조 달러 (1,400조 원)</b>, 지금의 약 7배</li>
+        <li>리포트 스스로도 "보수적 가정에 따른 대략적인 추정"이라고 밝혔어요.</li>
+      </ul>
+    </div>
+
+    <div class="stage now">
+      <span class="stage-tag">지금은 · 2026.10</span>
+      <div class="stat-grid" style="margin-top:4px;">
+        <div class="stat-tile"><div class="stat-label">현재 시가총액</div><div class="stat-value">$300~310B</div><div class="stat-sub">약 420조~434조 원 · 2023년의 약 2배</div></div>
+        <div class="stat-tile gold"><div class="stat-label">2028 목표 하단까지</div><div class="stat-value">+60% 이상</div><div class="stat-sub">남은 2년 남짓 · 지금 속도로는 빠듯</div></div>
+        <div class="stat-tile purple"><div class="stat-label">2026년 6월 월간 거래량</div><div class="stat-value">$1.79T</div><div class="stat-sub">약 2,506조 원 · 역대 최고</div></div>
+      </div>
+      <ul>
+        <li>2026년 1분기에 약 3,150억 달러로 최고치를 찍었고, 5~7월에는 오히려 줄었어요.</li>
+        <li>잔고는 정체됐지만 거래량은 폭발했어요. 같은 돈이 더 자주 돈다는 뜻이에요. 회전율이 월 약 6회로 2년 전의 약 두 배예요 (Standard Chartered).</li>
+        <li>다만 오간 돈 중 실제 물건값 결제는 약 1%뿐이었어요 (2025년 기준). 리포트가 전제로 깔았던 "모바일 결제 시장 점유율"은 아직 거의 오르지 않았어요.</li>
+      </ul>
+    </div>
+
+    <div class="verdict"><span class="pill prog">진행 중</span>현재 속도로는 하단(5,000억 달러)도 빠듯해요. 토론 질문: "이제는 시총이 아니라 거래량으로 성공을 재야 하지 않을까?"</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- 06 -->
+  <section class="block" id="t6">
+    <p class="section-label">06 · Verdict</p>
+    <h2>마무리 토론: 전망 3가지 판정</h2>
+    <p class="section-desc">리포트 앞부분 요약의 전망 3가지를 4번 파트 기준으로 판정했어요</p>
+
+    <ol class="discuss">
+      <li>
+        <div class="q"><span class="pill prog">진행 중</span>"자산을 스스로 보관하려는 수요가 높아질 것"</div>
+        <p>DEX 비중이 역대 최고인 24%를 찍었지만, 거래의 3/4은 아직 CEX에서 일어나요.</p>
+      </li>
+      <li>
+        <div class="q"><span class="pill ok">맞음</span>"온체인 유동성과 스테이블코인 시총 확대, 스테이킹·RWA 관심 증가"</div>
+        <p>시총은 약 2배, RWA는 약 19배, 토큰화 국채는 약 22배 커졌어요. 다만 시총 수치 목표는 진행 중이에요.</p>
+      </li>
+      <li>
+        <div class="q"><span class="pill ok">맞음 · 진행 중</span>"산업 간 경계가 약해져 새로운 금융·경제 질서가 생길 것"</div>
+        <p>블랙록(자산운용), Stripe·Visa(결제), 글로벌 은행 21곳까지 모두 블록체인 위로 들어왔어요.</p>
+      </li>
+    </ol>
+  </section>
+
+  <details class="sources">
+    <summary>참고 자료</summary>
+    <ul>
+      <li><a href="https://xangle.io/research/detail/1568" target="_blank" rel="noopener">쟁글 「스테이블코인, Web3.0의 미래를 열다」 (Hashed Open Research, 2023.10)</a></li>
+      <li><a href="https://cryptobriefing.com/dex-spot-volume-record-cex-ratio-july-2026/" target="_blank" rel="noopener">DEX spot volume hits record 24% of CEX volume in July 2026 (Crypto Briefing)</a></li>
+      <li><a href="https://www.forbes.com/sites/digital-assets/2026/07/27/the-stablecoin-market-shrank-for-the-first-time-in-four-years-watch-the-volumes-instead/" target="_blank" rel="noopener">The Stablecoin Market Shrank For The First Time In Four Years (Forbes)</a></li>
+      <li><a href="https://coinmarketcap.com/academy/article/dollar315b-stablecoin-supply-hits-record-as-usdc-gains" target="_blank" rel="noopener">$315B Stablecoin Supply Hits Record as USDC Gains (CoinMarketCap)</a></li>
+      <li><a href="https://en.cryptonomist.ch/2026/09/06/usdc-stablecoin-growth-expansion/" target="_blank" rel="noopener">USDC Stablecoin Growth Leads Market Expansion in 2026 (Cryptonomist)</a></li>
+      <li><a href="https://www.forbes.com/sites/gabrielalinzainescu/2026/09/30/ousd-stablecoin-goes-live-with-visa-mastercard-and-stripe-behind-it/" target="_blank" rel="noopener">OUSD Stablecoin Goes Live With Visa, Mastercard And Stripe (Forbes)</a></li>
+      <li><a href="https://wavect.io/blog/open-usd-stablecoin-explained-2026/" target="_blank" rel="noopener">Open USD Explained: Live Networks, Issuer and Restrictions (Wavect)</a></li>
+      <li><a href="https://fortune.com/2026/06/30/stripe-visa-stablecoin-rival-ousd-tether-circle/" target="_blank" rel="noopener">Stripe, Visa and over 140 other businesses to launch stablecoin (Fortune)</a></li>
+      <li><a href="https://genfinity.io/2026/09/01/global-bank-stablecoin-consortium-21-banks-usd-token-2027/" target="_blank" rel="noopener">21 Banks Form a Global Bank Stablecoin Consortium (Genfinity)</a></li>
+      <li><a href="https://blogs.law.ox.ac.uk/oblb/blog-post/2026/03/stablecoin-interest-crossroads-micas-prohibition-and-us-regulatory-maze" target="_blank" rel="noopener">Stablecoin Interest at a Crossroads (Oxford Business Law Blog)</a></li>
+      <li><a href="https://www.lw.com/en/us-crypto-policy-tracker/legislative-developments" target="_blank" rel="noopener">US Crypto Policy Tracker (Latham &amp; Watkins)</a></li>
+      <li><a href="https://www.bankingdive.com/news/senate-banking-committee-crypto-stablecoin-yield-scott-warren-warner-trump/820384/" target="_blank" rel="noopener">Senate panel approves crypto bill (Banking Dive)</a></li>
+      <li><a href="https://cryptoticker.io/en/clarity-act-2-senate-vote-failed-crypto-regulation/" target="_blank" rel="noopener">CLARITY Act 2.0: What Happens After the Senate Defeat? (CryptoTicker)</a></li>
+      <li><a href="https://homecryptoinvest.com/articles/clarity-act-update-2026.html" target="_blank" rel="noopener">CLARITY Act 2026: Senate Vote Result and What Happens Now</a></li>
+      <li><a href="https://eco.com/support/en/articles/15210582-top-tokenized-treasury-funds-2026-buidl-ousg-usdy-benji-compared" target="_blank" rel="noopener">Top Tokenized Treasury Funds 2026: BUIDL, OUSG, USDY, BENJI (Eco)</a></li>
+      <li><a href="https://www.onebullex.com/news/articles/rwa-xyz-records-46-2-billion-tokenized-assets-across-36-chains-in-2026" target="_blank" rel="noopener">RWA.xyz Records $46.2 Billion Tokenized Assets Across 36 Chains</a></li>
+    </ul>
+  </details>
+
+  <footer>
+    스테이블코인 스터디 · 4번 온체인: 시장과 규제 · 발표 윤선
+  </footer>
+
+</div>
+
+</body></html>
