@@ -1,4 +1,4 @@
-# my-blog-org.github.io
+# crypto-burger.github.io
 
 Organization 소속 여러 명이 함께 운영하는 Jekyll 블로그. 자세한 설계는
 `docs/superpowers/specs/2026-09-26-org-blog-design.md` 참고.
