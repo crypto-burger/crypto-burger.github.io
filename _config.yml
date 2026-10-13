@@ -7,6 +7,10 @@ permalink: /:year/:month/:day/:title/
 markdown: kramdown
 timezone: Asia/Seoul
 
+# Google Search Console 소유권 확인 (jekyll-seo-tag가 메타 태그로 출력)
+webmaster_verifications:
+  google: "ID4mj2acHxdp1Rq79DrARa0SiZNWRDPE6xmfkk0zi08"
+
 exclude:
   - CLAUDE.md
   - AGENTS.md
