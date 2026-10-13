@@ -1,6 +1,6 @@
 # 글쓰기 가이드
 
-이 블로그는 Organization 멤버 누구나 글을 올릴 수 있습니다. Claude Code를
+이 블로그는 crypto-burger 멤버 누구나 글을 올릴 수 있습니다. Claude Code를
 쓰고 있다면 그냥 "이런 내용으로 글 써서 올려줘"라고 요청하세요 —
 `CLAUDE.md`에 정리된 절차를 따라 브랜치 생성부터 PR까지 대신
 처리해줍니다.

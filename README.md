@@ -1,6 +1,7 @@
 # crypto-burger.github.io
 
-Organization 소속 여러 명이 함께 운영하는 Jekyll 블로그. 자세한 설계는
+crypto-burger 멤버들이 블록체인·스테이블코인 스터디 내용과 미니 프로젝트를
+함께 기록하는 Jekyll 블로그. 자세한 설계는
 `docs/superpowers/specs/2026-09-26-org-blog-design.md` 참고.
 
 ## 처음 설정할 때 (GitHub 웹에서 수동으로 해야 하는 것들)
