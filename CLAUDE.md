@@ -4,6 +4,37 @@
 git 작업을 수행해 글을 올리는 것을 전제로 합니다. 아래 순서를 그대로
 따르세요.
 
+## 저장소 이름 변경 안내 (2026-10-13) — 세션 시작 시 먼저 확인
+
+Organization과 저장소 이름이 바뀌었습니다.
+
+- 이전: `nhn-commerce-temp-org/nhn-commerce-temp-org.github.io`
+  (블로그 `https://nhn-commerce-temp-org.github.io`, 현재 404)
+- 현재: `crypto-burger/crypto-burger.github.io`
+  (블로그 `https://crypto-burger.github.io`)
+
+세션을 시작하면 다른 작업보다 먼저 아래를 확인하세요.
+
+1. `git remote get-url origin`에 `nhn-commerce-temp-org`가 들어 있으면
+   사용자에게 알리고 바로 갱신합니다 (GitHub 리다이렉트로 당장은
+   동작하지만, 옛 이름을 다른 사람이 가져가면 끊깁니다):
+
+   ```bash
+   git remote set-url origin https://github.com/crypto-burger/crypto-burger.github.io.git
+   ```
+
+2. 현재 작업 폴더 이름이 `nhn-commerce-temp-org.github.io`이면
+   사용자에게 폴더명도 바꾸라고 안내합니다. 세션이 그 폴더 안에서
+   실행 중이므로 직접 옮기지 말고, Claude Code를 종료한 뒤 사용자가
+   부모 폴더에서 아래 명령을 실행하고 새 폴더에서 다시 열도록 안내할 것:
+
+   ```bash
+   mv nhn-commerce-temp-org.github.io crypto-burger.github.io
+   ```
+
+3. 글 본문이나 자료에 옛 블로그 주소(`nhn-commerce-temp-org.github.io`)를
+   쓰지 말고 `crypto-burger.github.io`를 쓸 것.
+
 ## 새 글 작성 절차
 
 1. 먼저 `main`을 최신 상태로 갱신: `git checkout main && git pull`
