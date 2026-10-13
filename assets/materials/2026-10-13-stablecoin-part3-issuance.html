@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3️⃣ 발행: 제도권 금융</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#0f1420; --panel:#171e2e; --panel2:#1e2739; --line:#2c3850;
+  --ink:#eef2f8; --sub:#a9b4c8; --mute:#76839b;
+  --accent:#f2b84b; --blue:#5aa9ff; --green:#4fd1a1; --red:#ff7a7a; --violet:#b39cff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+.deck{position:relative;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;padding:48px 64px 70px;display:none;flex-direction:column;overflow-y:auto}
+.slide.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{font-size:14px;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-bottom:10px;text-transform:uppercase}
+h1{font-size:44px;line-height:1.25;font-weight:800}
+h2{font-size:32px;line-height:1.3;font-weight:800;margin-bottom:22px}
+h3{font-size:19px;font-weight:700;margin-bottom:8px}
+p,li{font-size:17px;line-height:1.6;color:var(--sub)}
+b,strong{color:var(--ink)}
+.hl{color:var(--accent);font-weight:700}
+.blue{color:var(--blue)} .green{color:var(--green)} .red{color:var(--red)} .violet{color:var(--violet)}
+ul{padding-left:20px} li{margin:4px 0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card.tint{background:linear-gradient(160deg,#1f2a40,#171e2e)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:#2a3550;color:var(--sub);margin-bottom:8px}
+.tag.y{background:#3d3220;color:var(--accent)} .tag.b{background:#1d3150;color:var(--blue)} .tag.g{background:#173a31;color:var(--green)} .tag.r{background:#432427;color:var(--red)}
+.oneliner{margin-top:auto;padding:14px 18px;border-left:4px solid var(--accent);background:#1a2232;border-radius:8px;font-size:18px;color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.5}
+th{color:var(--mute);font-weight:600;font-size:13.5px;letter-spacing:.03em}
+td{color:var(--sub)} td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+.timeline{position:relative;padding-left:26px}
+.timeline:before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl{position:relative;margin:0 0 13px}
+.tl:before{content:"";position:absolute;left:-23px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
+.tl.y:before{background:var(--accent)} .tl.r:before{background:var(--red)} .tl.g:before{background:var(--green)}
+.tl .d{font-weight:800;color:var(--ink);font-size:15px;margin-right:8px}
+.tl span{font-size:15.5px;color:var(--sub)}
+.flow{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+.step{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.step .n{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#1a1300;font-weight:800;align-items:center;justify-content:center;margin-bottom:8px}
+.step h3{font-size:16px} .step p{font-size:14.5px}
+.arrow{align-self:center;color:var(--mute);font-size:22px}
+.bs{display:grid;grid-template-columns:1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:8px}
+.bs>div{padding:9px 12px;font-size:14px;color:var(--sub)} .bs>div:first-child{border-bottom:1px solid var(--line)}
+.bs .t{font-weight:800;color:var(--ink);font-size:13px;margin-bottom:4px}
+.verdict{display:flex;gap:16px;align-items:flex-start;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+.badge{flex:none;font-weight:800;font-size:15px;padding:6px 12px;border-radius:8px;min-width:96px;text-align:center}
+.badge.y{background:#3d3220;color:var(--accent)} .badge.g{background:#173a31;color:var(--green)} .badge.r{background:#432427;color:var(--red)} .badge.b{background:#1d3150;color:var(--blue)}
+.big{font-size:40px;font-weight:800;color:var(--ink);line-height:1.1}
+.small{font-size:13px;color:var(--mute);line-height:1.5}
+.src{font-size:12.5px;color:var(--mute);margin-top:14px}
+.title-wrap{margin:auto 0}
+.title-wrap .meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--sub)}
+/* notes */
+.notes{display:none}
+body.show-notes .notes{display:block;margin-top:18px;padding:14px 16px;border:1px dashed #4a5a7a;border-radius:10px;background:#121928}
+.notes p,.notes li{font-size:15px;color:#c9d3e6}
+.notes .nt{font-size:12px;font-weight:800;color:var(--violet);letter-spacing:.06em;margin-bottom:6px}
+/* hud */
+.hud{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:12px;padding:0 18px;background:rgba(15,20,32,.92);border-top:1px solid var(--line);z-index:9}
+.hud button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.hud button:hover{border-color:var(--accent)}
+.hud .count{font-size:13px;color:var(--mute);min-width:56px}
+.hud .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;color:var(--green);min-width:54px}
+.hud .timer.warn{color:var(--accent)} .hud .timer.over{color:var(--red)}
+.hud .hint{margin-left:auto;font-size:12px;color:var(--mute)}
+.progress{position:fixed;left:0;top:0;height:3px;background:var(--accent);transition:width .3s;z-index:10}
+@media (max-width:900px){
+  .slide{padding:28px 18px 70px}
+  h1{font-size:32px} h2{font-size:24px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+  .hud .hint{display:none}
+  td:first-child{white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1. 타이틀 -->
+<section class="slide">
+  <div class="title-wrap">
+    <div class="kicker">스테이블코인 스터디 · Part 3 / 4</div>
+    <h1>누가 발행하나:<br><span class="hl">제도권 금융</span>(일본 · 은행)</h1>
+    <p style="margin-top:16px;font-size:20px">은행이 스테이블코인을 찍으면 무엇이 달라지나 — 2023년의 예측과 2026년의 현실</p>
+    <div class="meta">
+      <span class="chip">리포트 2-3: 일본 자금결제법 · MUFG Progmat · 바이낸스×MUFG</span>
+      <span class="chip">리포트 3-1: 은행산업 영향 · 예금 토큰화</span>
+      <span class="chip">기준일 2026.10</span>
+    </div>
+  </div>
+  <div class="notes"><div class="nt">발표자 노트 · 0:00–0:20</div>
+    <p>"앞에서 누가 쓰고 어디서 쓰는지를 봤으니, 저는 '누가 찍어내느냐'를 맡았습니다. 리포트는 일본 은행이 스테이블코인을 찍는 시대가 온다고 했는데, 3년 지난 지금 실제로 어떻게 됐는지가 핵심입니다."</p></div>
+</section>
+
+<!-- 2. 리포트 요약 -->
+<section class="slide">
+  <div class="kicker">리포트 요약 (2023.10)</div>
+  <h2>리포트가 말한 것: "일본을 시작으로 은행이 직접 스테이블코인을 찍는다"</h2>
+  <div class="grid g2">
+    <div class="card"><span class="tag y">2-3 · 제도</span><h3>일본, 2023.6 개정 자금결제법 시행</h3>
+      <p>스테이블코인을 <b>'전자결제수단'</b>으로 정의 → 은행·신탁회사 등이 엔화 연동 코인 발행 가능. 첫 타깃은 연 <b>1,000조 엔</b> 규모의 기업 간(B2B) 결제 시장.</p></div>
+    <div class="card"><span class="tag y">2-3 · 인프라</span><h3>MUFG의 Progmat</h3>
+      <p>신탁은행 사내 프로젝트(2016) → <b>2023.10 독립법인</b>. 일본 기업 <b>214곳</b> 컨소시엄. 수익 = 월 정액 라이선스료 + 토큰 이전 수수료.</p></div>
+    <div class="card"><span class="tag y">2-3 · 사례</span><h3>바이낸스 재팬 × MUFG 신탁은행</h3>
+      <p>2023.9 엔화·외화 스테이블코인 <b>공동 검토</b> 발표. 규제 승인 후 <b>2024년 말 운영 개시</b> 목표.</p></div>
+    <div class="card"><span class="tag b">3-1 · 은행산업</span><h3>위협이자 기회</h3>
+      <p><b>위협</b>: 계좌·환전·대출·예금 기능이 지갑/DeFi로 분산 (예: ETH 스테이킹 2,768만 ETH ≈ 58조 원, 연 3~7%).<br><b>기회</b>: 스테이블코인 발행 참여, <b>예금 토큰화</b> — AML·예금자보호를 갖춘 은행의 신뢰.</p></div>
+  </div>
+  <div class="oneliner">핵심 질문 두 개 → <b>① 은행 스테이블코인과 예금토큰은 뭐가 다른가?</b> &nbsp; <b>② 엔화 스테이블코인은 실제로 나왔나?</b></div>
+  <div class="notes"><div class="nt">발표자 노트 · 0:20–1:10</div>
+    <p>4개 카드를 빠르게 훑고, "이 리포트의 기대는 크게 '일본 은행 = 스테이블코인 발행의 엔진'이었다"로 정리. 이후 두 질문으로 넘어간다고 예고.</p></div>
+</section>
+
+<!-- 3. 일본 3유형 -->
+<section class="slide">
+  <div class="kicker">배경지식 · 이것만 알면 질문의 절반이 풀림</div>
+  <h2>일본법상 스테이블코인 3가지 유형</h2>
+  <table>
+    <tr><th>유형</th><th>누가 발행</th><th>법적으로 무엇인가</th><th>대표 사례 (2026)</th></tr>
+    <tr><td>① 은행 예금형</td><td>은행</td><td><b>예금 그 자체</b>를 토큰으로 표시 → 사실상 <span class="hl">예금토큰</span></td><td>GMO아오조라넷은행 DCJPY 등</td></tr>
+    <tr><td>② 자금이동업형</td><td>송금업 등록 핀테크</td><td>송금업자에 맡긴 돈에 대한 청구권 (예금·국채로 담보)</td><td><b>JPYC</b> (2025.10~)</td></tr>
+    <tr><td>③ 신탁형</td><td>신탁은행·신탁회사</td><td>준비금을 <b>신탁</b>에 넣고, 코인 = 그 신탁의 수익권. 은행 고유재산과 분리</td><td><b>Progmat Coin</b> 기반 · 3메가뱅크 공동 코인(준비 중)</td></tr>
+  </table>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card tint"><h3>왜 MUFG·바이낸스는 '신탁형'을 골랐나?</h3><p>당시 발표에서 <b>가장 유연한 설계가 가능한 유형</b>이라 판단. 은행 대차대조표 밖(신탁)에서 관리되니 은행 본체 리스크와 분리되고, 엔화·달러 등 다양한 통화 코인을 '브랜드'별로 찍어낼 수 있음.</p></div>
+    <div class="card tint"><h3>여기서 갈리는 포인트</h3><p>같은 "은행이 낸 코인"이라도 <b>①은 예금</b>, <b>③은 신탁 보관증</b>. 이 차이가 다음 슬라이드(예금토큰 vs 스테이블코인)의 핵심.</p></div>
+  </div>
+  <div class="notes"><div class="nt">발표자 노트 · 1:10–1:50</div>
+    <p>표는 가리키기만 하고, "①은 통장 잔액을 토큰화한 것, ③은 금고에 넣어둔 돈의 보관증"이라는 비유 하나로 정리. JPYC가 ②라는 점(은행이 아니라 핀테크)을 미리 깔아두면 7번 슬라이드가 자연스러움.</p></div>
+</section>
+
+<!-- 4. Progmat 연혁 -->
+<section class="slide">
+  <div class="kicker">2-3 · MUFG Progmat</div>
+  <h2>Progmat: 사내 1인 프로젝트에서 '일본 토큰화 국가 인프라'로</h2>
+  <div class="grid g2">
+    <div class="timeline">
+      <div class="tl"><span class="d">2016.12</span><span>MUFG 신탁은행 'FinTech 추진실' 출범 (전담자 1명)</span></div>
+      <div class="tl r"><span class="d">~2018</span><span><b>가상화폐 신탁</b> 상품 기획 → 금융기관의 가상화폐 취급이 막히며 중단</span></div>
+      <div class="tl y"><span class="d">2019</span><span><b>'자산 토큰화'로 피벗</b> · 'Progmat' 발표, ST연구 컨소시엄(21개사) 설립</span></div>
+      <div class="tl"><span class="d">2021</span><span>일본 최초 공모형 부동산 토큰증권(ST) 발행</span></div>
+      <div class="tl"><span class="d">2022</span><span>스테이블코인 기반 'Progmat Coin' 발표</span></div>
+      <div class="tl y"><span class="d">2023.10</span><span>Progmat Inc. 독립 — 주주에 미즈호·미쓰이스미토모 계열, NTT데이터, JPX 등 <b>라이벌들이 공동 소유</b></span></div>
+      <div class="tl g"><span class="d">2026.6</span><span>3메가뱅크 공동 스테이블코인의 발행 기반으로 거론</span></div>
+      <div class="tl g"><span class="d">2026.7</span><span>ST 플랫폼 전체(약 4,520억 엔 규모)를 Avalanche 전용 퍼블릭 L1로 이전</span></div>
+    </div>
+    <div>
+      <div class="card"><span class="tag r">피벗 전</span><h3>가상화폐 신탁</h3><p>이미 있는 코인(BTC 등)을 은행이 <b>맡아서 관리</b>해주는 상품. 자산 = 코인.</p></div>
+      <div style="text-align:center;color:var(--mute);margin:6px 0">↓ 방향이 정반대</div>
+      <div class="card"><span class="tag g">피벗 후</span><h3>자산 토큰(토큰증권)</h3><p>부동산·채권 같은 <b>현실 자산의 권리를 토큰으로 발행</b>. 토큰 = 증권. 소액 투자, 실시간 권리 이전.</p></div>
+      <div class="card" style="margin-top:12px"><h3>왜 중요?</h3><p>스테이블코인(돈)과 토큰증권(자산)을 <b>같은 레일</b>에서 맞교환하려는 그림 — Progmat의 진짜 목표.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="nt">발표자 노트 · 1:50–2:40</div>
+    <p>피벗 포인트를 강조: "코인을 금융상품에 담으려다 막히자, 금융상품을 코인으로 만드는 쪽으로 방향을 뒤집었다." 라이벌 은행들이 공동 주주라는 점 → 나중에 3메가뱅크 공동 발행이 Progmat 위에서 가능해진 배경.</p>
+    <p>질문 대비: 리포트는 사건 이름을 안 썼음. 정황상 2018.1 코인체크 해킹(NEM 약 580억 엔 유출) 이후 금융청 규제 강화로 보는 게 자연스럽다고 말하되 단정은 피하기.</p></div>
+</section>
+
+<!-- 5. 발행 흐름 -->
+<section class="slide">
+  <div class="kicker">2-3 · 바이낸스 × MUFG 발행 구조 (쉽게 풀기)</div>
+  <h2>돈은 신탁은행 금고로, 코인은 블록체인으로</h2>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><h3>이용자 → 바이낸스 재팬</h3><p>"100만 엔어치 코인 주세요" 하고 엔화 지불. 바이낸스는 <b>중개자</b>(판매 창구).</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">2</div><h3>바이낸스 → MUFG 신탁은행</h3><p><b>금전신탁</b>: 돈을 맡기며 "이 돈은 <b>코인 가진 사람들 몫</b>으로 따로 관리하라"는 계약.</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">3</div><h3>신탁 장부에 기록</h3>
+      <div class="bs"><div><div class="t">자산 (가진 것)</div>맡은 엔화 → 예금 등으로 안전하게 보관</div><div><div class="t">부채 (줄 의무)</div>코인 보유자에게 돌려줄 돈 = <b>스테이블코인</b></div></div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">4</div><h3>Progmat → 블록체인</h3><p>장부에 맞춰 같은 액수의 토큰을 <b>발행(mint)</b>.</p></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">5</div><h3>이용자 지갑</h3><p>코인 수령. 환불(상환)은 <b>역순</b>: 코인 소각 → 엔화 반환.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card tint"><h3>포인트 ①: 자산 = 부채가 항상 1:1</h3><p>코인 1엔어치가 돌아다니면 금고에 반드시 1엔이 있다. 은행처럼 그 돈을 대출로 굴리지 않음.</p></div>
+    <div class="card tint"><h3>포인트 ②: 도산 격리</h3><p>신탁재산은 은행·바이낸스의 고유재산과 법적으로 분리 → 둘 중 누가 망해도 코인 보유자 몫은 보호. FTX 사태 직후라 이게 셀링포인트.</p></div>
+  </div>
+  <div class="notes"><div class="nt">발표자 노트 · 2:40–3:30</div>
+    <p>"금고 보관증" 비유로 설명. 리포트 원문의 '대차대조표 자산 쪽에 엔화, 부채 쪽에 스테이블코인'은 결국 '맡은 돈 = 돌려줄 돈'이라는 뜻. 위탁자(맡기는 쪽)·수탁자(MUFG 신탁)·수익자(코인 보유자) 3자 구조라는 것만 기억.</p></div>
+</section>
+
+<!-- 6. Q1 -->
+<section class="slide">
+  <div class="kicker">질문 ① 은행이 발행하는 스테이블코인 vs 예금토큰</div>
+  <h2>둘 다 '은행이 만든 디지털 돈'이지만, 돈의 정체가 다르다</h2>
+  <table>
+    <tr><th></th><th>은행 스테이블코인 (신탁형 등)</th><th>예금토큰</th></tr>
+    <tr><td>정체</td><td>따로 떼어 둔 <b>준비금에 대한 청구권</b></td><td><b>은행 예금 그 자체</b>를 블록체인에 표시</td></tr>
+    <tr><td>뒤에 있는 돈</td><td>100% 준비금 (현금성 자산, 분리 보관)</td><td>일반 예금과 동일 (부분지급준비)</td></tr>
+    <tr><td>은행 입장</td><td>돈이 묶임 → <b>대출 재원 감소</b></td><td>예금이 그대로 남음 → <b>대출(신용창출) 유지</b></td></tr>
+    <tr><td>이자</td><td>대개 금지 (美 GENIUS법·EU MiCA 등)</td><td>지급 가능</td></tr>
+    <tr><td>보호 장치</td><td>신탁 분리보관(도산 격리)</td><td>예금이므로 예금자보호 체계 안 (국가별 세부 상이)</td></tr>
+    <tr><td>누가 쓸 수 있나</td><td>퍼블릭 체인에서 비교적 넓게 유통</td><td>KYC된 허가형 지갑 위주</td></tr>
+    <tr><td>사례</td><td>3메가뱅크 공동 코인(준비), USDC류</td><td>JPMorgan JPMD(2025.11, Base), 한국 '프로젝트 한강'</td></tr>
+  </table>
+  <div class="oneliner">스테이블코인 = <b>금고에 넣은 돈의 보관증</b> · 예금토큰 = <b>내 통장 잔액에 블록체인 옷을 입힌 것</b>. 그래서 은행·중앙은행은 예금토큰을 더 선호한다.</div>
+  <div class="notes"><div class="nt">발표자 노트 · 3:30–4:20</div>
+    <p>가장 중요한 줄은 '은행 입장'. 예금이 스테이블코인으로 빠지면 은행이 대출할 돈이 줄어든다 → 은행·한국은행이 예금토큰을 밀고, 스테이블코인은 '은행 중심 발행'을 주장하는 이유.</p>
+    <p>JPMorgan 측도 예금토큰이 부분지준이라 확장성이 크고, 이자도 줄 수 있어 기관 입장에서 낫다고 공개적으로 주장.</p></div>
+</section>
+
+<!-- 7. Q2 -->
+<section class="slide">
+  <div class="kicker">질문 ② 엔화 스테이블코인은 실제로 나왔나?</div>
+  <h2>나왔다. 그런데 <span class="hl">은행이 아니라 핀테크가 먼저</span></h2>
+  <div class="grid g2">
+    <div class="timeline">
+      <div class="tl r"><span class="d">2023.9</span><span>바이낸스×MUFG 공동검토 (2024말 목표) → <b>출시 확인 안 됨</b></span></div>
+      <div class="tl y"><span class="d">2025.8</span><span>JPYC, 자금이동업자 등록</span></div>
+      <div class="tl y"><span class="d">2025.10.27</span><span><b>JPYC 발행 개시</b> — 첫 규제형 엔화 코인. 예금·국채 100% 담보, 수수료 무료</span></div>
+      <div class="tl"><span class="d">2025.11</span><span>3메가뱅크 공동 발행 실증, 금융청 지원 과제 채택</span></div>
+      <div class="tl"><span class="d">2025.12</span><span>SBI·Startale 'JPYSC' 발표 (SBI신세이신탁은행 발행, 2026 2Q 목표)</span></div>
+      <div class="tl g"><span class="d">2026.6.10</span><span>MUFG·SMBC·미즈호 협의회 설치, <b>2026년도(~2027.3) 실거래</b> 목표 · 신탁형</span></div>
+    </div>
+    <div>
+      <div class="card"><span class="tag y">JPYC 현황 (2026.5)</span>
+        <div class="grid g3" style="margin-top:6px">
+          <div><div class="big">25억+</div><div class="small">누적 발행(엔)</div></div>
+          <div><div class="big">1.8만</div><div class="small">계좌 수</div></div>
+          <div><div class="big">350억+</div><div class="small">누적 거래(엔)</div></div>
+        </div>
+        <p class="small" style="margin-top:10px">⚠ '누적 발행'은 '현재 유통 잔액'이 아님. 2026.1 인터뷰 기준 실제 유통은 약 3억 엔 수준.</p></div>
+      <div class="card" style="margin-top:12px"><h3>규모 감각</h3><p>달러 스테이블코인 전체 <b>약 3,000억 달러</b> vs JPYC 누적 <b>약 25억 엔(≈1,700만 달러)</b>. 아직 <b>수만 분의 1</b>. 은행권 엔화 코인은 아직 실거래 전.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="nt">발표자 노트 · 4:20–5:10</div>
+    <p>반전 포인트: 리포트는 '은행 주도'를 예상했지만, 첫 엔화 코인은 스타트업 JPYC(자금이동업형). 메가뱅크는 2027년 3월까지 실거래가 목표라 아직 '준비 중'.</p>
+    <p>왜 느린가(Q&A 대비): 엔화 금리가 낮아 준비금 이자수익이 작음 → 발행사 수익모델이 약함 / 글로벌 수요는 달러 코인에 쏠림 / 일본의 현금·카드 선호.</p></div>
+</section>
+
+<!-- 8. 그때 vs 지금 -->
+<section class="slide">
+  <div class="kicker">숫자로 보는 3년</div>
+  <h2>리포트 당시 vs 지금</h2>
+  <table>
+    <tr><th>항목</th><th>2023.10 (리포트)</th><th>2026 (현재)</th><th>판정</th></tr>
+    <tr><td>스테이블코인 시총</td><td>약 1,500억 달러</td><td>약 3,000억 달러대 (2026.4 3,186억, 사상 최대)</td><td><span class="tag g">2배</span></td></tr>
+    <tr><td>리포트의 2028 전망</td><td>5,000억~1조 달러</td><td>성장은 맞지만 동력은 달러 코인</td><td><span class="tag b">진행 중</span></td></tr>
+    <tr><td>Progmat</td><td>독립법인 출범, 컨소시엄 214사</td><td>일본 토큰증권 발행액의 64.6% 점유 · 2026.7 퍼블릭 체인 이전</td><td><span class="tag g">성장</span></td></tr>
+    <tr><td>일본 토큰증권 시장</td><td>(부동산 ST 초기)</td><td>잔고 2025말 약 5,831억 엔 → 2026말 1조 엔 돌파 전망</td><td><span class="tag g">성장</span></td></tr>
+    <tr><td>바이낸스×MUFG 코인</td><td>2024말 운영 목표</td><td>출시 확인 안 됨. 대신 PayPay가 바이낸스재팬 지분 40% 인수(2025.10)</td><td><span class="tag r">미실현</span></td></tr>
+    <tr><td>엔화 스테이블코인</td><td>0 (제도만 존재)</td><td>JPYC 운영 중, 3메가뱅크 2027.3 전 실거래 목표</td><td><span class="tag b">진행 중</span></td></tr>
+    <tr><td>B2B 1,000조 엔 시장</td><td>"스테이블코인이 먼저 들어갈 곳"</td><td>아직 실증 단계 (메가뱅크 공동코인 타깃이 바로 기업결제)</td><td><span class="tag b">진행 중</span></td></tr>
+    <tr><td>한국</td><td>한은 CBDC 활용성 테스트 계획 발표(2023.10.4)</td><td>프로젝트 한강 1단계 완료 → 2단계 · 원화 코인법 미통과</td><td><span class="tag b">진행 중</span></td></tr>
+  </table>
+  <div class="notes"><div class="nt">발표자 노트 · 5:10–5:40</div>
+    <p>표 전체를 읽지 말고 빨간 줄(바이낸스×MUFG 미실현)과 초록 줄(Progmat 토큰증권 성장)만 짚기. "돈(스테이블코인)보다 자산(토큰증권) 쪽이 먼저 컸다"가 한 줄 메시지.</p></div>
+</section>
+
+<!-- 9. 한국 -->
+<section class="slide">
+  <div class="kicker">국내 업데이트</div>
+  <h2>한국: "예금토큰은 실험 중, 원화 스테이블코인은 입법 대기"</h2>
+  <div class="grid g2">
+    <div class="card"><span class="tag y">원화 스테이블코인 입법</span><h3>디지털자산기본법 ('2단계 입법')</h3>
+      <ul>
+        <li>2025.6 원화 코인 허용·사전인가제 담은 법안 발의</li>
+        <li><b>최대 쟁점 = 발행 주체</b>: 한은 "은행 지분 50%+1 컨소시엄부터" vs 여당 TF·업계 "비은행에도 개방"</li>
+        <li>그 외: 거래소 대주주 지분 제한, 보유자 이자 지급 금지 검토</li>
+        <li>2025말 → 2026 상반기 처리 무산 (기관 간 이견, 지방선거·원 구성)</li>
+        <li>2026.7 정부 '경제성장전략'에 하반기 입법 명시, 8월 금융위원장 "연내"</li>
+        <li><b>2026.10 현재: 국회 미통과</b>, 정무위 논의 중</li>
+      </ul></div>
+    <div class="card"><span class="tag b">프로젝트 한강 (CBDC + 예금토큰)</span><h3>한은 도매 CBDC 위에서 은행이 예금토큰 발행</h3>
+      <ul>
+        <li><b>1단계 (2025.4~6)</b>: 7개 은행, 약 8.1만 명 참여, 11만 4,880건 결제. 한계 = 사용처 적고 불편</li>
+        <li><b>2단계 (2026 하반기~, 종료일 없음)</b>: 9개 은행, 최대 50만 명, 개인 간 송금·생체인증·자동 충전, 보유 한도 지갑당 1,000만 원</li>
+        <li>전기차 충전시설 <b>국고보조금을 예금토큰으로 지급</b> — 용도·기한을 코드로 제한</li>
+      </ul></div>
+  </div>
+  <div class="oneliner">일본은 <b>핀테크 스테이블코인이 먼저</b>, 한국은 <b>은행 예금토큰이 먼저</b>. 같은 질문에 정반대 순서로 답하는 중.</div>
+  <div class="notes"><div class="nt">발표자 노트 · 5:40–6:20</div>
+    <p>51% 룰이 왜 싸움인지 한 문장: 한은은 통화·금융안정(예금 이탈, 신용공급 위축)을, 업계는 혁신·글로벌 경쟁을 이유로 듦. 한강은 '예금토큰' 실험이라는 점을 6번 슬라이드와 연결.</p></div>
+</section>
+
+<!-- 10. 은행산업 영향 재평가 -->
+<section class="slide">
+  <div class="kicker">3-1 재평가 · 은행산업 영향</div>
+  <h2>예금을 위협한 건 스테이킹이 아니라 <span class="hl">스테이블코인</span>이었다</h2>
+  <div class="grid g2">
+    <div class="card"><span class="tag r">리포트 예측</span><h3>"스테이킹이 예금 수요 일부 대체"</h3>
+      <p>ETH 스테이킹은 3년 새 더 늘었지만(공급량의 약 4분의 1 수준으로 추정), 예금 대체로 보긴 어렵다.</p>
+      <ul><li>원금이 <b>ETH 가격</b>에 따라 출렁 → 예금과 위험이 다름</li><li>참여자는 원래 크립토 보유자 → 은행 예금이 옮겨간 게 아님</li></ul></div>
+    <div class="card"><span class="tag y">실제 쟁점</span><h3>스테이블코인 ↔ 은행 예금</h3>
+      <ul><li>BOJ 부총재: 스테이블코인이 <b>예금 기능 일부를 대체</b>할 수 있다고 언급</li>
+      <li>美: 발행사 이자 금지(GENIUS) 이후에도 '리워드' 허용 여부로 은행권 vs 업계 공방</li>
+      <li>韓: 원화 코인 도입 시 <b>예금 감소·신용공급 위축</b> 우려가 51% 룰의 논거</li></ul></div>
+  </div>
+  <div class="card tint" style="margin-top:14px"><h3>은행의 반격 = 리포트가 말한 두 카드 그대로</h3>
+    <p><b>① 발행에 직접 참여</b>: 3메가뱅크 공동 엔화 코인, MUFG 포함 21개 금융기관의 달러 코인 합작사 설립 합의(2026.9) &nbsp;·&nbsp; <b>② 예금토큰</b>: JPMorgan JPMD, 한국 한강</p></div>
+  <div class="notes"><div class="nt">발표자 노트 · 6:20–6:45</div>
+    <p>리포트의 '위협' 진단은 대상이 빗나갔고, '기회' 처방은 정확했다고 정리.</p></div>
+</section>
+
+<!-- 11. 판정 -->
+<section class="slide">
+  <div class="kicker">마무리 토론 · 리포트 전망 3가지 (발행 파트 기준)</div>
+  <h2>맞음 / 틀림 / 진행 중</h2>
+  <div class="verdict"><span class="badge b">진행 중</span><div><h3>① 모바일 월렛 확산 → 거래소 독점 약화</h3><p>일본에선 오히려 <b>결제앱이 거래소를 품는</b> 방향 (PayPay → 바이낸스재팬 지분 40%, PayPay머니로 코인 매매·방일객 USDT 결제).</p></div></div>
+  <div class="verdict"><span class="badge y">절반 맞음</span><div><h3>② 금융기관 발행 본격화 → 온체인 유동성·시총 확대</h3><p>시총 2배는 <b>맞음</b>. 그러나 동력은 달러 코인이고, <b>일본 금융기관 발행은 3년째 실거래 전</b> → 원인 진단은 틀림.</p></div></div>
+  <div class="verdict"><span class="badge g">맞음 (진행 중)</span><div><h3>③ 산업 경계 약화 → 은행은 블록체인으로 돌파구</h3><p>은행들이 실제로 <b>공동 발행·예금토큰</b>으로 움직이는 중. 방향은 정확, 속도는 리포트보다 느림.</p></div></div>
+  <div class="notes"><div class="nt">발표자 노트 · 6:45–7:00</div>
+    <p>판정 세 줄만 읽고 끝. 토론 때 다른 파트 판정과 비교.</p></div>
+</section>
+
+<!-- 12. 결론 -->
+<section class="slide">
+  <div class="title-wrap">
+    <div class="kicker">한 줄 결론</div>
+    <h1 style="font-size:38px">"은행이 스테이블코인을 찍는다"는 그림은 맞았지만,<br><span class="hl">먼저 커진 건 돈(코인)이 아니라 자산(토큰증권)</span>이었고,<br>은행이 진짜 원하는 건 <span class="blue">예금토큰</span>이다.</h1>
+    <div class="grid g2" style="margin-top:30px">
+      <div class="card"><h3>토론 질문 1</h3><p>원화 스테이블코인, 은행이 51% 쥐면 더 믿을 만한가 — 아니면 혁신을 막나?</p></div>
+      <div class="card"><h3>토론 질문 2</h3><p>우리 일상에 먼저 올 건 원화 스테이블코인일까, 예금토큰일까?</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13. Backup Q&A -->
+<section class="slide">
+  <div class="kicker">Backup · 예상 Q&A</div>
+  <h2>질문 들어오면 여기서</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Q. 일본 엔화 코인은 왜 이렇게 작나?</h3><p>① 엔화 금리가 낮아 준비금 운용수익(발행사 핵심 수익원)이 작음 ② 국제 결제·DeFi 수요는 달러 코인에 집중 ③ 현금·카드 선호 문화. 메가뱅크 코인이 B2B로 들어오면 판이 바뀔 수 있다는 시각도 있음.</p></div>
+    <div class="card"><h3>Q. 바이낸스×MUFG는 왜 무산됐나?</h3><p>공식 철회 발표는 확인 못 함. 바이낸스재팬은 이후 PayPay와 손잡는 쪽으로 방향을 틀었고, MUFG는 3메가뱅크 공동 코인에 집중. (추정이라고 밝히고 말하기)</p></div>
+    <div class="card"><h3>Q. 신탁형이 은행 예금형보다 안전한가?</h3><p>도산 격리 측면에선 신탁형이 유리, 대신 예금자보호는 없음. 예금형(예금토큰)은 예금자보호 체계 안에 있지만 은행 자체 건전성에 기대는 구조.</p></div>
+    <div class="card"><h3>Q. 한국 51% 룰은 결국 어떻게 될까?</h3><p>2026.10 현재 미정. 정부·국회 모두 '연내'를 말하지만 반복 지연. 한은은 '스테이블코인과 예금토큰 공존' 입장을 내며 원화 코인 도입 자체엔 찬성으로 선회.</p></div>
+  </div>
+</section>
+
+<!-- 14. 출처 -->
+<section class="slide">
+  <div class="kicker">출처</div>
+  <h2>참고 자료</h2>
+  <ul class="small" style="columns:2;column-gap:32px">
+    <li>Hashed Open Research, 「스테이블코인, Web3.0의 미래를 열다」, 쟁글 (2023.10.17)</li>
+    <li>MUFG 신탁은행 × Binance Japan 공동검토 보도자료 (2023.9.26)</li>
+    <li>3메가뱅크 공동 발행 보도자료 (MUFG 은행, 2025.11.7 / 2026.6.10)</li>
+    <li>MUFG 은행, 21개 금융기관 달러 스테이블코인 사업체 설립 (2026.9.2)</li>
+    <li>헤럴드경제·블록미디어·블루밍비트 — JPYC 승인·발행 (2025.8~10)</li>
+    <li>THE BRIDGE — JPYC 시리즈B, 발행 지표 (2026.3~8)</li>
+    <li>헤럴드경제 — JPYC 대표 인터뷰 (2026.1)</li>
+    <li>블록미디어 — SBI·Startale JPYSC (2025.12)</li>
+    <li>CoinPost — Progmat ST 마켓 아웃룩 2026</li>
+    <li>The Block — Progmat Avalanche 이전 (2026.7)</li>
+    <li>Coin360·Cointelegraph — PayPay의 바이낸스재팬 지분 인수 (2025.10~11)</li>
+    <li>블록미디어 — 스테이블코인 시총 3,186억 달러 (2026.4)</li>
+    <li>The Block·Decrypt — JPMorgan JPMD (2025.6, 2025.11)</li>
+    <li>딜사이트·파이낸스스코프 — 프로젝트 한강 2단계 (2026.7)</li>
+    <li>토요경제·이데일리·MTN — 디지털자산기본법 진행 (2026.7~8)</li>
+    <li>딜사이트·헤럴드경제·블록미디어 — 은행 51% 룰 논쟁 (2025.12~2026.1)</li>
+  </ul>
+  <p class="src">※ ETH 스테이킹 현재 규모는 2차 자료 기반 추정치. 수치는 발표 전 최신값 재확인 권장.</p>
+</section>
+
+</div>
+
+<div class="hud">
+  <button id="prev">← 이전</button>
+  <span class="count" id="count">1 / 1</span>
+  <button id="next">다음 →</button>
+  <button id="notesBtn">노트 (N)</button>
+  <button id="timerBtn">7:00 타이머 (T)</button>
+  <span class="timer" id="timer">7:00</span>
+  <span class="hint">← → / Space 이동 · F 전체화면</span>
+</div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const count=document.getElementById('count'), prog=document.getElementById('progress');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    count.textContent=(i+1)+' / '+slides.length;
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+  }
+  const h=parseInt((location.hash||'').slice(1),10);
+  show(isNaN(h)?0:h-1);
+  document.getElementById('prev').onclick=()=>show(i-1);
+  document.getElementById('next').onclick=()=>show(i+1);
+  const toggleNotes=()=>document.body.classList.toggle('show-notes');
+  document.getElementById('notesBtn').onclick=toggleNotes;
+
+  let left=420, running=false, iv=null;
+  const t=document.getElementById('timer');
+  function render(){
+    const a=Math.abs(left), m=Math.floor(a/60), s=String(a%60).padStart(2,'0');
+    t.textContent=(left<0?'-':'')+m+':'+s;
+    t.classList.toggle('warn',left<=60&&left>0);
+    t.classList.toggle('over',left<=0);
+  }
+  function toggleTimer(){
+    if(running){clearInterval(iv);running=false;return}
+    running=true; iv=setInterval(()=>{left--;render()},1000);
+  }
+  document.getElementById('timerBtn').onclick=toggleTimer;
+  document.getElementById('timerBtn').ondblclick=()=>{clearInterval(iv);running=false;left=420;render()};
+
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    else if(e.key==='n'||e.key==='N'){toggleNotes()}
+    else if(e.key==='t'||e.key==='T'){toggleTimer()}
+    else if(e.key==='r'||e.key==='R'){clearInterval(iv);running=false;left=420;render()}
+    else if(e.key==='f'||e.key==='F'){
+      try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(err){}
+    }
+  });
+})();
+</script>
+</body>
+</html>
