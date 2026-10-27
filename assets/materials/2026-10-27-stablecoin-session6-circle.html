@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2️⃣ Circle 정책 프레임워크</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#0f1420; --panel:#171e2e; --panel2:#1e2739; --line:#2c3850;
+  --ink:#eef2f8; --sub:#a9b4c8; --mute:#76839b;
+  --accent:#f2b84b; --blue:#5aa9ff; --green:#4fd1a1; --red:#ff7a7a; --violet:#b39cff;
+  --s-usdc:#3d8ee8; --s-usdt:#239f73; --s-other:#3a465e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+.deck{position:relative;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;padding:48px 64px 70px;display:none;flex-direction:column;overflow-y:auto}
+.slide.active{display:flex;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{font-size:14px;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-bottom:10px}
+h1{font-size:44px;line-height:1.25;font-weight:800}
+h2{font-size:31px;line-height:1.3;font-weight:800;margin-bottom:22px}
+h3{font-size:19px;font-weight:700;margin-bottom:8px}
+p,li{font-size:17px;line-height:1.6;color:var(--sub)}
+b,strong{color:var(--ink)}
+.hl{color:var(--accent);font-weight:700}
+.blue{color:var(--blue)} .green{color:var(--green)} .red{color:var(--red)}
+ul{padding-left:20px} li{margin:4px 0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card.tint{background:linear-gradient(160deg,#1f2a40,#171e2e)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:#2a3550;color:var(--sub);margin-bottom:8px}
+.tag.y{background:#3d3220;color:var(--accent)} .tag.b{background:#1d3150;color:var(--blue)} .tag.g{background:#173a31;color:var(--green)} .tag.r{background:#432427;color:var(--red)}
+.oneliner{margin-top:auto;padding:14px 18px;border-left:4px solid var(--accent);background:#1a2232;border-radius:8px;font-size:18px;color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:15.5px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.5}
+th{color:var(--mute);font-weight:600;font-size:13.5px;letter-spacing:.03em}
+td{color:var(--sub)} td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+.big{font-size:40px;font-weight:800;color:var(--ink);line-height:1.1}
+.small{font-size:13px;color:var(--mute);line-height:1.5}
+.src{font-size:12.5px;color:var(--mute);margin-top:14px}
+.title-wrap{margin:auto 0}
+.title-wrap .meta{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;color:var(--sub)}
+.num{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#1a1300;font-weight:800;align-items:center;justify-content:center;margin-right:8px;flex:none}
+.prin{display:flex;align-items:flex-start;gap:4px}
+.verdict{display:flex;gap:16px;align-items:flex-start;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+.badge{flex:none;font-weight:800;font-size:15px;padding:6px 12px;border-radius:8px;min-width:96px;text-align:center}
+.badge.y{background:#3d3220;color:var(--accent)} .badge.g{background:#173a31;color:var(--green)} .badge.b{background:#1d3150;color:var(--blue)}
+/* chart */
+.chart{display:grid;gap:22px;margin-top:6px}
+.crow .lbl{display:flex;justify-content:space-between;font-size:14px;color:var(--sub);margin-bottom:8px}
+.crow .lbl b{font-size:16px}
+.bar{display:flex;height:34px;gap:2px}
+.seg{height:100%;position:relative;display:flex;align-items:center;padding-left:10px;font-size:13.5px;font-weight:700;color:#fff;white-space:nowrap;cursor:default}
+.seg:first-child{border-radius:4px 0 0 4px} .seg:last-child{border-radius:0 4px 4px 0}
+.seg.usdt{background:var(--s-usdt)} .seg.usdc{background:var(--s-usdc)} .seg.oth{background:var(--s-other);color:var(--sub)}
+.seg:hover{filter:brightness(1.15)}
+.legend{display:flex;gap:18px;font-size:13.5px;color:var(--sub);margin-top:4px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+#tip{position:fixed;pointer-events:none;background:#0b0f18;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--ink);display:none;z-index:20;max-width:260px;line-height:1.5}
+/* notes & hud */
+.notes{display:none}
+body.show-notes .notes{display:block;margin-top:18px;padding:14px 16px;border:1px dashed #4a5a7a;border-radius:10px;background:#121928}
+.notes p{font-size:15px;color:#c9d3e6}
+.notes .nt{font-size:12px;font-weight:800;color:var(--violet);letter-spacing:.06em;margin-bottom:6px}
+.hud{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:12px;padding:0 18px;background:rgba(15,20,32,.92);border-top:1px solid var(--line);z-index:9}
+.hud button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.hud button:hover{border-color:var(--accent)}
+.hud .count{font-size:13px;color:var(--mute);min-width:56px}
+.hud .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;color:var(--green);min-width:54px}
+.hud .timer.warn{color:var(--accent)} .hud .timer.over{color:var(--red)}
+.hud .hint{margin-left:auto;font-size:12px;color:var(--mute)}
+.progress{position:fixed;left:0;top:0;height:3px;background:var(--accent);transition:width .3s;z-index:10}
+@media (max-width:900px){
+  .slide{padding:28px 16px 70px}
+  h1{font-size:32px} h2{font-size:24px}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .hud .hint{display:none}
+  td:first-child{white-space:normal}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div id="tip"></div>
+<div class="deck">
+
+<!-- 1 -->
+<section class="slide">
+  <div class="title-wrap">
+    <div class="kicker">스테이블코인 스터디 2회차 · Part 2 / 4</div>
+    <h1>믿을 수 있는 스테이블코인의 조건<br><span class="hl">Circle의 정책 프레임워크</span></h1>
+    <p style="margin-top:16px;font-size:20px">2023년 Circle이 제시한 "좋은 스테이블코인"의 규칙은 법이 됐을까, 시장에서 이겼을까</p>
+    <div class="meta">
+      <span class="chip">리포트 2장 · 발표자 Yam Ki Chan (Circle 전략·정책 VP)</span>
+      <span class="chip">웨비나 2023.11.3 · 리포트 2023.12</span>
+      <span class="chip">기준일 2026.10</span>
+    </div>
+  </div>
+  <div class="notes"><div class="nt">0:00–0:10</div>
+    <p>"앞에서 한국은행의 CBDC를 봤으니, 저는 민간 발행사 대표 선수인 Circle이 '믿을 수 있는 스테이블코인은 이래야 한다'고 제시한 규칙을 맡았습니다. 그 규칙이 3년 뒤 법이 됐는지, 그리고 시장에서도 이겼는지가 핵심입니다."</p></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">리포트 요약</div>
+  <h2>Circle의 주장: "규칙을 지키는 스테이블코인이 아시아 결제를 바꾼다"</h2>
+  <div class="grid g2">
+    <div class="card"><span class="tag y">누구</span><h3>Circle · USDC</h3><p>2013년 설립 미국 핀테크. USDC 시총 <b>244억 달러</b>로 테더에 이어 <b>2위</b>. 누적 온체인 거래 <b>12조 달러</b>.</p></div>
+    <div class="card"><span class="tag y">왜</span><h3>아시아에서의 쓸모</h3><p>무역결제의 약 <b>80%가 달러</b>, 아시아향 송금 <b>2,900억 달러</b>. 200달러 송금에 수수료 <b>5.7%(약 12달러)</b> → 스테이블코인으로 싸고 빠르게.</p></div>
+    <div class="card"><span class="tag y">어떻게</span><h3>6대 설계 원칙</h3><p>민주적 가치 · 프라이버시 · 금융포용 · AML/CFT · <b>1:1 준비금</b> · 상호운용성 (+ 규제 확실성)</p></div>
+    <div class="card"><span class="tag y">증거</span><h3>준비금·감사·상환·라이선스</h3><p>준비금 약 90% 국채·레포(BlackRock 운용), <b>Deloitte</b> 월간 확인, 1:1 상환. 미국 46개 주 + NY BitLicense, 싱가포르 MPI.</p></div>
+  </div>
+  <div class="oneliner">오늘 질문 두 개 → <b>① "믿을 수 있는 스테이블코인"의 조건은 결국 뭔가?</b> &nbsp; <b>② Circle과 Tether는 어떻게 다르게 운영되나?</b></div>
+  <div class="notes"><div class="nt">0:10–0:40</div>
+    <p>4개 카드를 '누구·왜·어떻게·증거' 순서로 훑기. "Circle은 이날 사실상 '우리처럼 하면 믿을 수 있다'는 기준표를 들고 나왔다"로 정리하고 질문 두 개 예고.</p></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <div class="kicker">맥락 · 이 웨비나가 열린 시점</div>
+  <h2>왜 Circle은 "신뢰"를 이렇게 강조했나</h2>
+  <div class="grid g3">
+    <div class="card"><div class="big">2022.5</div><p style="margin-top:8px"><b>테라·루나 붕괴</b><br>알고리즘 스테이블코인 UST가 하루아침에 무너짐 → "스테이블코인도 깨진다"</p></div>
+    <div class="card"><div class="big">2023.3</div><p style="margin-top:8px"><b>SVB 파산 → USDC 디페깅</b><br>준비금 중 약 <b>33억 달러</b>가 SVB에 묶여 USDC가 한때 <b>0.87달러</b>까지 하락</p></div>
+    <div class="card"><div class="big">2023.11</div><p style="margin-top:8px"><b>이 웨비나</b><br>USDC는 SVB 여파로 시총이 크게 줄어든 상태. "우리 준비금은 안전하다"를 증명해야 했던 시점</p></div>
+  </div>
+  <div class="card tint" style="margin-top:16px"><h3>그래서 리포트의 숫자들이 이렇게 읽힌다</h3>
+    <p>"준비금 약 90%를 <b>BlackRock 펀드의 국채·레포</b>로" = SVB처럼 은행 한 곳에 돈이 묶이는 위험을 줄였다는 메시지.<br>"지갑의 <b>75%가 100달러 미만</b>" = 투기용이 아니라 은행 없는 사람들의 생활 돈이라는 메시지.</p></div>
+  <div class="notes"><div class="nt">0:40–1:10</div>
+    <p>이 슬라이드가 리포트에 없는 맥락. "Circle이 원칙을 길게 설명한 건, 불과 8개월 전에 자기 코인이 0.87달러까지 떨어졌기 때문"이라고 말하면 뒤 내용이 다 이해됨.</p></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">2장 · 스테이블코인 분류</div>
+  <h2>가치를 1달러에 묶는 방법은 세 가지</h2>
+  <div class="grid g3">
+    <div class="card"><span class="tag r">알고리즘형</span><h3>"코드로 수량 조절"</h3><p>담보 없이 다른 토큰 발행·소각으로 가격 유지</p><p class="small" style="margin-top:8px">예: 테라 UST (2022 붕괴)</p><p style="margin-top:10px"><b>지금:</b> 사실상 퇴출. 美 GENIUS법·EU MiCA 모두 결제용 스테이블코인으로 인정 안 함</p></div>
+    <div class="card"><span class="tag y">자산연동형</span><h3>"여러 자산을 담보로"</h3><p>여러 통화·코인 등 바스켓을 담보로 발행</p><p class="small" style="margin-top:8px">예: MakerDAO의 DAI (현재 USDS로 리브랜딩)</p><p style="margin-top:10px"><b>지금:</b> DeFi에서 틈새로 생존. 시총 상위권이지만 점유율은 작음</p></div>
+    <div class="card"><span class="tag g">단일법정화폐형</span><h3>"달러 1개 = 코인 1개"</h3><p>한 통화의 현금·국채를 1:1로 보관</p><p class="small" style="margin-top:8px">예: USDC, USDT</p><p style="margin-top:10px"><b>지금:</b> 시장의 압도적 주류. 각국 법이 사실상 <b>이 형태만</b> 허용</p></div>
+  </div>
+  <div class="oneliner">Circle의 분류는 사실상 "③만 진짜 돈이다"라는 주장이었고, 3년 뒤 <b>법이 그 주장을 그대로 받아들였다.</b></div>
+  <div class="notes"><div class="nt">1:10–1:40</div>
+    <p>세 박스를 '코드 / 바스켓 / 1:1 현금'으로 한 단어씩. 2025년 이후 에테나 USDe 같은 '합성 달러'(파생상품 헤지로 가치 유지)가 새로 등장했다는 정도만 질문 오면 언급.</p></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <div class="kicker">2장 · 아시아에서의 효용</div>
+  <h2>Circle이 꼽은 쓸모: 무역결제와 해외송금</h2>
+  <div class="grid g2">
+    <div class="card"><h3>무역결제</h3>
+      <ul><li>아시아는 GDP 대비 무역 비중이 미국·유럽보다 훨씬 큼</li><li>무역 대금의 약 <b>80%가 달러</b>로 청구</li><li>중소기업은 <b>환전 비용</b> + 대금 받을 때까지 묶이는 <b>운전자본</b> 부담</li></ul></div>
+    <div class="card"><h3>해외송금</h3>
+      <ul><li>아시아로 들어오는 송금 연 <b>약 2,900억 달러</b></li><li>세계은행: 200달러 보내면 수수료 <b>5.7%(약 12달러)</b></li><li>가장 취약한 사람들이 가장 비싼 수수료를 냄</li></ul></div>
+  </div>
+  <div class="card tint" style="margin-top:16px"><h3>3년 뒤: Circle은 이걸 '네트워크'로 만들었다</h3>
+    <p><b>Circle Payments Network(CPN)</b>: 은행·결제사가 USDC로 국경 간 정산하는 망. 2026년 2분기 말 참여 금융기관 <b>175곳</b>, 연환산 결제액 <b>약 147억 달러</b>. 송금 시장(2,900억 달러) 대비 아직 <b>약 5%</b> 수준이지만 분기마다 빠르게 증가 중.</p></div>
+  <div class="notes"><div class="nt">생략 (넘기기) · 1:40</div>
+    <p>"송금 200달러에 12달러"라는 숫자 하나만 강조. CPN은 '진행 중'의 근거로 사용. 147억 달러는 전 세계 기준이라 아시아만의 수치는 아니라는 점을 정확히.</p></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">2장 · 6대 설계 원칙</div>
+  <h2>Circle이 말한 "좋은 디지털 돈"의 6가지 조건</h2>
+  <div class="grid g3">
+    <div class="card prin"><span class="num">1</span><div><h3>민주적 가치</h3><p>특정 집단이 아니라 <b>누구나</b> 쓸 수 있어야</p></div></div>
+    <div class="card prin"><span class="num">2</span><div><h3>프라이버시</h3><p>거래 내용은 <b>당사자끼리만</b> 보이도록 설계 단계부터</p></div></div>
+    <div class="card prin"><span class="num">3</span><div><h3>금융포용</h3><p>은행 계좌 없는 사람도. 한국은 휴대폰 보급률 100% 초과</p></div></div>
+    <div class="card prin"><span class="num">4</span><div><h3>AML/CFT</h3><p>자금세탁·테러자금 방지를 <b>처음부터</b> 내장</p></div></div>
+    <div class="card prin" style="border-color:#5a4a26"><span class="num">5</span><div><h3>1:1 준비금</h3><p>코인 1개당 1달러. <b>대출로 불리지 않음</b> (은행의 신용창출과 정반대)</p></div></div>
+    <div class="card prin"><span class="num">6</span><div><h3>상호운용성</h3><p>체인·앱 사이를 <b>은행 예금보다 쉽게</b> 이동</p></div></div>
+  </div>
+  <div class="card tint" style="margin-top:16px"><h3>+ 규제 확실성</h3><p>스테이블코인이 명확한 자산으로 인정돼야 기업이 장부에 <b>현금성 자산</b>으로 올릴 수 있다.</p></div>
+  <div class="oneliner">①~③은 '가치', ④~⑥은 '기술·운영'. 이 중 법에 가장 직접 들어간 건 <b>④ AML</b>과 <b>⑤ 1:1 준비금</b>.</div>
+  <div class="notes"><div class="nt">1:43–2:23</div>
+    <p>6개를 다 읽지 말고 묶어서: "앞의 셋은 누구를 위한 돈인가, 뒤의 셋은 어떻게 안전하게 굴리나." 5번이 핵심이라 강조. 1회차와 연결: "1회차에서 본 예금토큰은 대출로 불리는 돈이고, Circle은 정반대로 절대 불리지 않는 돈을 주장."</p></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">2장 · 준비금·감사·상환 조건</div>
+  <h2>"원칙"을 실제로 증명하는 5가지 장치</h2>
+  <table>
+    <tr><th>장치</th><th>Circle이 제시한 기준 (2023)</th><th>쉽게 말하면</th></tr>
+    <tr><td>① 통화 일치</td><td>달러 코인이면 준비금도 달러</td><td>환율 때문에 금고가 줄어들 일 없게</td></tr>
+    <tr><td>② 고유동성 자산</td><td>약 90% 미국 단기국채·레포, 나머지 은행 현금. BlackRock 전용 펀드(Circle Reserve Fund)가 운용, 매일 순자산 공시</td><td>당장 현금으로 바꿀 수 있는 것만</td></tr>
+    <tr><td>③ 분리 보관</td><td>발행사 자금과 분리된 신탁 형태</td><td>Circle이 망해도 코인 주인 몫은 보호</td></tr>
+    <tr><td>④ 독립 검증</td><td>최소 월 1회 + 제3자 감사 (Deloitte)</td><td>"금고에 돈 있다"를 남이 확인</td></tr>
+    <tr><td>⑤ 1:1 상환</td><td>2차 시장 가격과 무관하게 1:1 달러 상환, 약 2영업일 내가 합리적</td><td>언제든 1달러로 돌려받을 권리</td></tr>
+  </table>
+  <p class="small" style="margin-top:12px">※ 상환은 기업·기관(B2B) 대상. 개인은 거래소 등 중개자를 통해 사고판다. + FinCEN 등록, FATF 트래블룰 준수, 의심거래 보고.</p>
+  <div class="notes"><div class="nt">생략 (넘기기) · 2:23</div>
+    <p>표의 '쉽게 말하면' 열만 읽어도 충분. 1회차 MUFG 신탁 구조(분리 보관·1:1)와 똑같은 논리라는 걸 한 마디로 연결.</p></div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <div class="kicker">2장 · 라이선스 현황 → 지금</div>
+  <h2>3년 사이 Circle은 '은행'이 됐다</h2>
+  <table>
+    <tr><th>지역</th><th>2023 (리포트)</th><th>2026 (현재)</th></tr>
+    <tr><td>미국</td><td>46개 주 + DC·푸에르토리코 송금업 라이선스, NYDFS BitLicense 최초 취득, FinCEN 등록</td><td><b>OCC 국가 신탁은행 최종 인가</b>(2026.7, First National Digital Currency Bank) · NYDFS 신탁회사 인가 · GENIUS법 체제 편입</td></tr>
+    <tr><td>EU</td><td>2023.4 프랑스에 전자화폐 라이선스 신청 중</td><td>2024.7 프랑스 EMI 인가 → <b>MiCA 하에서 USDC·EURC 합법 발행</b>한 첫 글로벌 발행사</td></tr>
+    <tr><td>싱가포르</td><td>MAS 주요결제기관(MPI) 라이선스</td><td>유지</td></tr>
+    <tr><td>영국·버뮤다</td><td>디지털자산 라이선스 (제도 미완)</td><td>버뮤다 라이선스 유지</td></tr>
+    <tr><td>일본</td><td>(언급 없음)</td><td>2025 SBI VC 트레이드 통해 USDC 유통 시작</td></tr>
+  </table>
+  <div class="oneliner">2023엔 "주별 송금업자" → 2026엔 <b>연방 인가를 받은 신탁은행</b>. 준비금을 직접 관리·수탁할 길이 열림.</div>
+  <div class="notes"><div class="nt">생략 (넘기기) · 2:27</div>
+    <p>미국·EU 두 줄만 짚기. '신탁은행'이란 말에 1회차 MUFG 신탁은행과 같은 구조라는 걸 연결하면 좋음.</p></div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <div class="kicker">질문 ① "믿을 수 있는 스테이블코인"의 조건은 결국?</div>
+  <h2>한 줄 답: <span class="hl">"1달러를 언제든 1달러로 돌려받을 수 있다는 확신"</span></h2>
+  <div class="grid g4">
+    <div class="card"><span class="tag g">무엇으로?</span><h3>담보</h3><p>같은 통화의 현금·단기국채로 <b>100% 이상</b></p></div>
+    <div class="card"><span class="tag g">어디에?</span><h3>보관</h3><p>발행사 돈과 <b>분리</b> — 파산해도 안전</p></div>
+    <div class="card"><span class="tag g">누가 확인?</span><h3>검증</h3><p><b>독립 회계법인</b>이 정기적으로 공시</p></div>
+    <div class="card"><span class="tag g">언제?</span><h3>상환</h3><p>가격과 무관하게 <b>1:1 상환권</b>을 법적으로 보장</p></div>
+  </div>
+  <div class="card tint" style="margin-top:16px"><h3>그리고 이 네 가지는 3년 뒤 그대로 법 조문이 됐다</h3>
+    <ul>
+      <li><b>EU MiCA</b> (2024.6 스테이블코인 조항 시행): 분리 준비금 · 감사 공개 · 상환권 보장 · 이자 지급 금지</li>
+      <li><b>美 GENIUS법</b> (2025.7 제정): 현금·단기국채 등으로 1:1 준비 · 매월 준비금 구성 공시 · 대형 발행사 연간 감사 · 이자 지급 금지</li>
+    </ul></div>
+  <div class="oneliner">단, SVB 사례가 보여주듯 <b>"안전한 은행에 맡겼다"도 완벽하진 않다.</b> 그래서 지금 법은 준비금을 은행 예금보다 국채 쪽으로 밀어붙인다.</div>
+  <div class="notes"><div class="nt">2:30–3:20</div>
+    <p>네 칸을 '무엇·어디·누가·언제'로 리듬 있게. "Circle이 2023년에 말한 체크리스트가 2024~25년에 EU와 미국 법의 뼈대가 됐다 — Circle 입장에서 보면 로비가 성공한 셈"이라는 한 문장이 포인트.</p></div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <div class="kicker">질문 ② Circle vs Tether</div>
+  <h2>Circle은 "규제 안으로", Tether는 "시장 속으로"</h2>
+  <table>
+    <tr><th></th><th>Circle (USDC)</th><th>Tether (USDT)</th></tr>
+    <tr><td>근거지·규제</td><td>미국 상장사, OCC 신탁은행·NYDFS·MiCA 인가</td><td>엘살바도르 거점, 미국·EU 규제 밖 → 미국용은 <b>USAT</b>를 별도 출시(2026.1, Anchorage 발행)</td></tr>
+    <tr><td>준비금 구성</td><td>현금·단기국채·레포만 (BlackRock 운용 펀드)</td><td>국채 중심이지만 <b>금 약 10%, 비트코인 약 3.5%</b>, 담보대출 등 포함 (2026.1Q)</td></tr>
+    <tr><td>검증 방식</td><td>매월 회계법인 증명 + 상장사로서 연간 감사</td><td>분기별 <b>증명(attestation)</b> 위주, 전면 감사는 미공개</td></tr>
+    <tr><td>돈 버는 구조</td><td>이자수익의 상당 부분을 <b>코인베이스 등 유통사에 나눠줌</b> (2Q 매출 7억 중 유통비용 4.1억)</td><td>이자·투자수익을 거의 혼자 가짐 (1Q 순이익 약 10억 달러)</td></tr>
+    <tr><td>주 무대</td><td>DeFi·기관·규제 시장(미국·EU)</td><td>신흥국 송금·결제, 중앙화 거래소, 트론 체인</td></tr>
+    <tr><td>EU</td><td>MiCA 인가 → 유로 코인 EURC 1위</td><td>MiCA 미인가 → EU 거래소에서 상장폐지</td></tr>
+  </table>
+  <div class="oneliner">Circle = <b>"감사받은 은행 같은 회사"</b>, Tether = <b>"이익을 크게 남기는 해외 금고"</b>. 신뢰 장치는 Circle이 앞서고, 사용량은 Tether가 앞선다.</div>
+  <div class="notes"><div class="nt">3:20–4:20</div>
+    <p>'준비금 구성'과 '돈 버는 구조' 두 줄이 핵심. Tether는 금·비트코인도 들고 있어 수익은 크지만 Circle 기준(현금·국채만)으론 탈락. Circle은 기준은 지키지만 유통을 남(코인베이스)에게 의존해 이익이 얇음.</p></div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <div class="kicker">업데이트 · Circle 상장 이후</div>
+  <h2>상장 대박 → 금리 하락에 흔들리는 '금리 장사' 회사</h2>
+  <div class="grid g4">
+    <div class="card"><div class="small">상장일 (NYSE: CRCL)</div><div class="big" style="font-size:32px">2025.6.5</div><p class="small" style="margin-top:6px">공모가 31달러, 첫날 +168%</p></div>
+    <div class="card"><div class="small">주가 고점 → 최근</div><div class="big" style="font-size:32px">~299 → 67</div><p class="small" style="margin-top:6px">달러 (2025.6 고점 / 2026.8 실적 발표 직후)</p></div>
+    <div class="card"><div class="small">2026 2분기 매출</div><div class="big" style="font-size:32px">7.0억$</div><p class="small" style="margin-top:6px">전년 대비 +7%, 순이익 4,800만$</p></div>
+    <div class="card"><div class="small">매출 중 준비금 이자</div><div class="big" style="font-size:32px">약 95%</div><p class="small" style="margin-top:6px">준비금 수익률 전년 대비 -0.66%p</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>약점: 금리와 유통사에 묶인 수익</h3><p>금리가 내리면 이자수익이 줄고, 그 이자의 절반 이상을 코인베이스 등 유통 파트너에게 지급. 2분기 USDC 유통량은 1분기보다 <b>약 5% 감소</b> — 토큰화 MMF·예금토큰과의 경쟁이 리스크로 지목.</p></div>
+    <div class="card"><h3>돌파구: '발행사'에서 '인프라'로</h3><p><b>Arc</b>(자체 블록체인, 2026.9 메인넷) · <b>CPN</b>(금융기관 결제망) · <b>국가 신탁은행</b> 인가. 이자 말고 수수료로 버는 구조를 만들려는 중.</p></div>
+  </div>
+  <div class="notes"><div class="nt">4:20–5:05</div>
+    <p>"상장은 성공했지만 수익 95%가 이자라서, 금리가 내리면 같이 내린다"가 핵심 한 줄. 주가 수치는 시점을 꼭 같이 말하기(변동이 큼). 예금토큰이 경쟁자로 언급된다는 점은 1회차와 바로 연결되는 고리.</p></div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <div class="kicker">업데이트 · USDC 시가총액과 점유율</div>
+  <h2>USDC는 3배 컸지만, 테더는 더 크게 컸다</h2>
+  <div class="chart" role="img" aria-label="스테이블코인 시장 구성 2023년 11월 대비 2026년 6월">
+    <div class="crow">
+      <div class="lbl"><b>2023.11</b><span>전체 약 1,250억 달러</span></div>
+      <div class="bar">
+        <div class="seg usdt" style="width:70%" data-tip="USDT · 약 870억 달러 · 약 70%">USDT 약 870억 (70%)</div>
+        <div class="seg usdc" style="width:20%" data-tip="USDC · 244억 달러 · 약 20%">USDC 244억 (20%)</div>
+        <div class="seg oth" style="width:10%" data-tip="기타 · 약 10%">기타</div>
+      </div>
+    </div>
+    <div class="crow">
+      <div class="lbl"><b>2026.6</b><span>전체 약 3,160억 달러</span></div>
+      <div class="bar">
+        <div class="seg usdt" style="width:59%" data-tip="USDT · 약 1,870억 달러 · 약 59%">USDT 약 1,870억 (59%)</div>
+        <div class="seg usdc" style="width:24%" data-tip="USDC · 약 750억 달러 · 약 24%">USDC 약 750억 (24%)</div>
+        <div class="seg oth" style="width:17%" data-tip="기타 (USDe, USDS, PYUSD 등) · 약 17%">기타</div>
+      </div>
+    </div>
+    <div class="legend"><span><i style="background:var(--s-usdt)"></i>USDT (Tether)</span><span><i style="background:var(--s-usdc)"></i>USDC (Circle)</span><span><i style="background:var(--s-other)"></i>기타</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card"><h3>USDC</h3><p>244억 → 약 750억 달러 (<b>약 3배</b>), 점유율 약 20% → 24%</p></div>
+    <div class="card"><h3>USDT</h3><p>약 870억 → 약 1,870억 달러 (<b>약 2배</b>), 여전히 압도적 1위</p></div>
+    <div class="card"><h3>둘이 합쳐</h3><p>시장의 <b>약 83%</b>. 나머지 신규 발행사들은 아직 미미</p></div>
+  </div>
+  <p class="src">2023.11 USDT·전체 수치는 당시 시장 데이터 기준 근사치. 2026.6은 DefiLlama 기준(Transak 정리).</p>
+  <div class="notes"><div class="nt">5:05–5:40</div>
+    <p>"규칙을 가장 잘 지킨 USDC가 성장률은 더 높았지만 1등은 못 됐다." 점유율은 2023년보다 올랐지만 2022년 한때 수준(테더와 비슷했던 시기)에는 못 미친다는 점도 질문 오면 언급.</p></div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <div class="kicker">업데이트 · MiCA 아래 유로 스테이블코인</div>
+  <h2>EURC: 유럽에선 Circle이 1등, 그런데 시장 자체가 작다</h2>
+  <div class="grid g3">
+    <div class="card"><div class="small">EURC 시총 (2026.10.19)</div><div class="big">약 5억$</div></div>
+    <div class="card"><div class="small">유로 스테이블코인 내 점유율</div><div class="big">약 60%</div></div>
+    <div class="card"><div class="small">전체 스테이블코인 중 유로 비중</div><div class="big">약 0.3%</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>MiCA가 만든 변화</h3>
+      <ul><li>2024년 시행 → 분리 준비금·감사·상환권 의무</li><li>미인가 코인은 EU 거래소에서 퇴출 → <b>USDT 상장폐지</b>, 테더 유로코인(EURT) 중단</li><li>규칙을 지킨 소수 발행사로 유동성 집중 → 유로 코인 시장 약 2배</li></ul></div>
+    <div class="card"><h3>그래도 작은 이유 & 다음 경쟁자</h3>
+      <ul><li>사람들이 원하는 건 여전히 <b>달러</b> — 유로 코인은 시장의 0.3%</li><li>성장은 개인 수요보다 '규제 정리' 효과</li><li>BBVA·ING·UniCredit 등 <b>유럽 은행 9곳 공동 유로 코인</b> 연내 출시 예정</li></ul></div>
+  </div>
+  <div class="notes"><div class="nt">5:40–6:05</div>
+    <p>"규칙이 명확한 곳에선 Circle이 이긴다"의 증거가 EURC. 하지만 "달러가 아니면 수요가 없다"는 한계도 같이. 은행 공동 코인은 1회차 일본 3메가뱅크와 같은 흐름.</p></div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <div class="kicker">국내 연결</div>
+  <h2>Circle과 한국: "원화 코인은 안 찍고, 인프라를 깔겠다"</h2>
+  <div class="grid g2">
+    <div class="card"><h3>2026.4 'Circle in Seoul'</h3>
+      <ul><li>업비트(두나무)·빗썸과 MOU, 코인원 경영진 면담</li><li>신한·KB·하나 금융그룹과 면담: 원화 코인 발행 기술, 국경 간 결제, 채권 토큰화 논의</li><li>이후 카카오 계열, 토스·토스뱅크와도 MOU</li></ul></div>
+    <div class="card"><h3>Circle의 입장</h3>
+      <ul><li>원화 스테이블코인을 <b>직접 발행하진 않음</b></li><li>발행할 은행·컨소시엄에 기술(Arc)과 결제망(CPN) 제공</li><li>법이 허용하면 국내 지점 설립 검토</li><li>MOU는 구속력 없고 출시 일정도 아직 없음</li></ul></div>
+  </div>
+  <div class="oneliner">한국 원화 코인 법은 아직 국회 계류 중 → Circle은 <b>"누가 발행하든 우리 인프라 위에서"</b> 전략.</div>
+  <div class="notes"><div class="nt">생략 (넘기기) · 6:05</div>
+    <p>짧게. 원화 코인 입법 자체는 윤선 파트(4번)에서 다루니 "자세한 건 윤선 님 파트에서"로 넘기기.</p></div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <div class="kicker">마무리 · Circle의 2023년 주장 판정</div>
+  <h2>맞음 / 절반 / 진행 중</h2>
+  <div class="verdict"><span class="badge g">맞음</span><div><h3>"1:1 준비금·분리보관·감사·상환권이 표준이 돼야 한다"</h3><p>MiCA와 GENIUS법이 거의 그대로 법으로 만들었다. 알고리즘형은 제도권에서 퇴출.</p></div></div>
+  <div class="verdict"><span class="badge y">절반 맞음</span><div><h3>"규칙이 명확해지면 믿을 수 있는 스테이블코인이 선택받는다"</h3><p>EU에선 맞음(EURC 1위, USDT 퇴출). 하지만 세계 전체 1위는 여전히 테더 — <b>신뢰보다 유통망·유동성</b>이 더 컸다.</p></div></div>
+  <div class="verdict"><span class="badge b">진행 중</span><div><h3>"아시아 무역결제·송금을 싸고 빠르게 바꿀 것"</h3><p>CPN 175개 기관, 연환산 약 147억 달러. 방향은 맞지만 아직 송금 시장의 일부.</p></div></div>
+  <div class="card tint" style="margin-top:6px"><h3>종합 토론 연결: "CBDC vs 스테이블코인, 누가 이기나"</h3><p>제 파트 기준으론 <b>규제 받는 민간 스테이블코인</b>이 법제화와 실사용에서 앞서는 중. 다만 그 안에서도 <b>규칙은 Circle이, 시장은 Tether가</b> 가져가고 있다.</p></div>
+  <div class="notes"><div class="nt">6:08–6:48</div>
+    <p>세 판정을 각 한 문장으로. 마지막 박스는 종합 토론 때 꺼낼 내 입장.</p></div>
+</section>
+
+<!-- 16 -->
+<section class="slide">
+  <div class="title-wrap">
+    <div class="kicker">한 줄 결론</div>
+    <h1 style="font-size:38px">Circle이 2023년에 말한 "믿을 수 있는 스테이블코인"의 조건은<br><span class="hl">법이 됐지만</span>, 시장 1등은 여전히 <span class="green">테더</span>다.</h1>
+    <p style="margin-top:14px;font-size:18px">신뢰는 규제 시장의 입장권이고, 1등을 정하는 건 유통망이었다.</p>
+    <div class="grid g2" style="margin-top:28px">
+      <div class="card"><h3>토론 질문 1</h3><p>내가 해외송금을 한다면 USDC와 USDT 중 뭘 쓸까? "믿을 수 있다"와 "많이 쓴다" 중 뭐가 더 중요할까?</p></div>
+      <div class="card"><h3>토론 질문 2</h3><p>수익의 95%가 이자인 스테이블코인 발행사 — 금리가 0%가 되면 이 사업은 어떻게 될까?</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="nt">6:48–7:03</div>
+    <p>결론 읽고 토론 질문 두 개 던지며 Q&A로.</p></div>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <div class="kicker">Backup · 예상 Q&A</div>
+  <h2>질문 들어오면 여기서</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Q. USDC도 디페깅됐는데 왜 더 믿을 만하다고 하나?</h3><p>SVB 때 0.87달러까지 갔지만, 준비금 자체는 남아 있었고 정부의 예금 보호 발표 후 며칠 만에 1달러로 회복. 이후 은행 예금 비중을 줄이고 국채 펀드 비중을 키움. "위기 때 투명하게 공개했다"는 점이 오히려 신뢰 근거로 쓰임.</p></div>
+    <div class="card"><h3>Q. 왜 개인은 Circle에서 직접 상환 못 하나?</h3><p>Circle의 직접 발행·상환 창구(Circle Mint)는 기관용. 개인은 거래소·지갑 같은 중개자를 통해 사고판다. 신원확인·자금세탁 방지 비용 때문.</p></div>
+    <div class="card"><h3>Q. 테더는 감사를 안 받나?</h3><p>분기마다 회계법인의 '증명(attestation)'은 공개. 다만 특정 시점에 자산이 있었는지 확인하는 수준이라, 회사 전체 재무를 들여다보는 '감사(audit)'와는 다름.</p></div>
+    <div class="card"><h3>Q. GENIUS법이 테더에 주는 영향은?</h3><p>미국 안에서 쓰이려면 미국 규정을 따라야 해서 테더는 미국 전용 USAT를 따로 냄(2026.1). 해외용 USDT는 기존 방식을 유지. 자세한 규제 비교는 준성 님 파트.</p></div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <div class="kicker">출처</div>
+  <h2>참고 자료</h2>
+  <ul class="small" style="columns:2;column-gap:32px">
+    <li>쟁글, 「CBDC와 스테이블코인: 한국은행, Circle, Paxos의 인사이트」 (2023.12.11)</li>
+    <li>Circle, Second Quarter 2026 Results (2026.8.5)</li>
+    <li>TIKR — Circle Q1 2026 실적 정리 (2026.5)</li>
+    <li>Crunchbase News — Circle IPO (2025.6)</li>
+    <li>FinTech Global — Circle OCC 신탁은행 최종 인가 (2026.7)</li>
+    <li>블록미디어 — Circle 2분기 실적과 국내 동향 (2026.8.12)</li>
+    <li>헤럴드경제 — Circle CEO 방한 인터뷰 (2026.4.13)</li>
+    <li>The Block — Tether USAT 출시 (2026.1)</li>
+    <li>Tether 2026년 1분기 증명 보고서 정리 (FRNT)</li>
+    <li>Transak — Stablecoin Market Cap 2026 (DefiLlama, 2026.6)</li>
+    <li>Yahoo Finance — Euro Stablecoins Hit Record Highs Under MiCA (2026.6)</li>
+    <li>Crypto Briefing — EURC 시총 (2026.10.19)</li>
+  </ul>
+  <p class="src">※ 2023.11 USDT 시총(약 870억 달러)과 Circle 주가 고점(약 299달러)은 당시 시장 데이터 기준 근사치. 주가는 변동이 커서 발표 직전 재확인 권장.</p>
+</section>
+
+</div>
+
+<div class="hud">
+  <button id="prev">← 이전</button>
+  <span class="count" id="count">1 / 1</span>
+  <button id="next">다음 →</button>
+  <button id="notesBtn">노트 (N)</button>
+  <button id="timerBtn">7:30 타이머 (T)</button>
+  <span class="timer" id="timer">7:30</span>
+  <span class="hint">← → / Space 이동 · F 전체화면 · R 타이머 리셋</span>
+</div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const count=document.getElementById('count'), prog=document.getElementById('progress');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    count.textContent=(i+1)+' / '+slides.length;
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+  }
+  const h=parseInt((location.hash||'').slice(1),10);
+  show(isNaN(h)?0:h-1);
+  window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1),10);if(!isNaN(n))show(n-1)});
+  document.getElementById('prev').onclick=()=>show(i-1);
+  document.getElementById('next').onclick=()=>show(i+1);
+  const toggleNotes=()=>document.body.classList.toggle('show-notes');
+  document.getElementById('notesBtn').onclick=toggleNotes;
+
+  const START=450; let left=START, running=false, iv=null;
+  const t=document.getElementById('timer');
+  function render(){
+    const a=Math.abs(left), m=Math.floor(a/60), s=String(a%60).padStart(2,'0');
+    t.textContent=(left<0?'-':'')+m+':'+s;
+    t.classList.toggle('warn',left<=60&&left>0);
+    t.classList.toggle('over',left<=0);
+  }
+  function toggleTimer(){
+    if(running){clearInterval(iv);running=false;return}
+    running=true; iv=setInterval(()=>{left--;render()},1000);
+  }
+  function reset(){clearInterval(iv);running=false;left=START;render()}
+  document.getElementById('timerBtn').onclick=toggleTimer;
+  document.getElementById('timerBtn').ondblclick=reset;
+
+  const tip=document.getElementById('tip');
+  document.querySelectorAll('[data-tip]').forEach(el=>{
+    el.addEventListener('mousemove',e=>{tip.textContent=el.dataset.tip;tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'});
+    el.addEventListener('mouseleave',()=>{tip.style.display='none'});
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(i+1)}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(i-1)}
+    else if(e.key==='n'||e.key==='N'){toggleNotes()}
+    else if(e.key==='t'||e.key==='T'){toggleTimer()}
+    else if(e.key==='r'||e.key==='R'){reset()}
+    else if(e.key==='f'||e.key==='F'){
+      try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(err){}
+    }
+  });
+})();
+</script>
+</body>
+</html>
