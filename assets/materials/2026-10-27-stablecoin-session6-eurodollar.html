@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>크립토 유로달러: Paxos 관점 (3장)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--bg:#0f1420;--panel:#171e2e;--line:#2c3850;--ink:#eef2f8;--sub:#a9b4c8;--mute:#76839b;--accent:#f2b84b;--blue:#5aa9ff;--green:#4fd1a1;--red:#ff7a7a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;word-break:keep-all}
+.deck{position:relative;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;padding:40px 56px 64px;display:none;flex-direction:column;overflow-y:auto}
+.slide.active{display:flex}
+.kicker{font-size:13px;letter-spacing:.08em;color:var(--accent);font-weight:700;margin-bottom:8px}
+h1{font-size:40px;line-height:1.25;font-weight:800}
+h2{font-size:28px;line-height:1.3;font-weight:800;margin-bottom:18px}
+h3{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+p,li{font-size:16px;line-height:1.6;color:var(--sub)}
+b{color:var(--ink)}
+ul{padding-left:20px}li{margin:3px 0}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;margin-right:6px}
+.t-o{background:#1d3150;color:var(--blue)}.t-u{background:#173a31;color:var(--green)}.t-b{background:#3d3220;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.5}
+th{color:var(--mute);font-size:13px}td{color:var(--sub)}td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+.one{margin-top:auto;padding:12px 16px;border-left:4px solid var(--accent);background:#1a2232;border-radius:8px;font-size:17px;color:var(--ink)}
+.src{font-size:12px;color:var(--mute);margin-top:12px;line-height:1.5}
+.src a{color:var(--blue)}
+.qa{margin-bottom:12px}.qa .q{font-weight:800;color:var(--ink);font-size:16px;margin-bottom:4px}
+.nav{position:fixed;bottom:14px;right:22px;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute)}
+.nav button{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+@media(max-width:800px){.slide{padding:28px 20px 70px}.g2,.g3{grid-template-columns:1fr}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide active">
+  <div style="margin:auto 0">
+    <div class="kicker">스테이블코인 스터디 · 3장</div>
+    <h1>크립토 유로달러<br>Paxos 관점에서 본 스테이블코인의 미래</h1>
+    <p style="margin-top:20px">출처: 쟁글 「CBDC와 스테이블코인: 한국은행, Circle, Paxos의 인사이트」(2023.12) 3장<br>(2023.11.3 Hashed Open Research 웨비나 · 발표자 Austin Campbell, 전 Paxos CRO / 컬럼비아 비즈니스스쿨)</p>
+    <p style="margin-top:14px"><span class="tag t-o">원문</span> 리포트 내용 &nbsp; <span class="tag t-u">업데이트</span> 2023년 이후 웹 조사 &nbsp; <span class="tag t-b">보강</span> 일반 배경지식(웹 미확인)</p>
+    <p class="src">작성 기준일 2026-10-27</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="kicker">1 · 정의와 역사</div>
+  <h2>스테이블코인 = 블록체인 위의 법정화폐 1단위</h2>
+  <p><span class="tag t-o">원문</span> 증권·상품의 토큰화가 아니라, 특정 영역에서 화폐 역할을 하는 것.</p>
+  <table style="margin-top:12px">
+    <tr><th>연도</th><th>사건</th></tr>
+    <tr><td>2014</td><td>테더(원래 이름 Realcoin). 4년 먼저 나온 선점 효과로 1위 정착. BVI 법인, 감독 없음</td></tr>
+    <tr><td>2017</td><td>DAI. 암호자산 초과담보 방식</td></tr>
+    <tr><td>2018</td><td>USDC, GUSD. 규제 감독 하에 운영된 첫 달러 스테이블코인</td></tr>
+    <tr><td>2019</td><td>BUSD. 첫 화이트라벨 스테이블코인</td></tr>
+    <tr><td>2023</td><td>페이팔 PYUSD 출시 / 버뮤다 통화청 하에서 이자 지급하는 USDM(미국 밖 첫 완전 규제 사례)</td></tr>
+  </table>
+  <p style="margin-top:12px"><span class="tag t-o">원문</span> Paxos는 2023.2 NYDFS의 BUSD 발행중단 명령을 받았다. 대규모 상환으로 시총이 225억 → 30억 달러가 됐지만 준비금 문제는 없었다. → 규제된 발행사는 상환 압력을 견딘다는 근거로 인용된다.</p>
+  <div class="one">핵심: 규제 감독 여부가 스테이블코인의 신뢰를 갈랐다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">2 · 국채 수요처</div>
+  <h2>스테이블코인은 정부의 새로운 자금조달 통로</h2>
+  <div class="grid g2">
+    <div class="card"><h3>당시 시장 구조 <span class="tag t-o">원문</span></h3><ul>
+      <li>달러 표시 98% 이상, 테더가 약 2/3, 2위 USDC</li>
+      <li>USDT·USDC가 단기 국채·익일물 역레포를 1,000억 달러 이상 보유</li></ul></div>
+    <div class="card"><h3>정책적 의미 <span class="tag t-o">원문</span></h3><ul>
+      <li>자국 통화 스테이블코인이 해외에서 쓰이면 → 국채의 새 수요처(captive funding source)</li>
+      <li>국내에서만 쓰이면 → 예금·현금 대체에 그치고 민간 자금을 흡수</li>
+      <li>건전한 구조는 같은 통화 준비자산과 1:1 교환 보장</li></ul></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>2026년 현재 <span class="tag t-u">업데이트</span></h3>
+    <p>전체 시총 약 3,000억 달러대(2026.5월 고점 약 3,224억, 8월 약 3,080억). USDT 약 59~60%, USDC 약 24%로 둘이 83% 안팎. 달러 지배는 줄지 않았다. 집계처마다 수치가 달라 "약 3,000억 달러대"로 표기한다.</p></div>
+  <div class="one">핵심: 스테이블코인 성장 = 단기 국채 수요 증가. 달러 패권의 새 도구라는 해석이 가능하다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">3 · 지역별 규제</div>
+  <h2>2023.11 시점의 원문 평가</h2>
+  <table>
+    <tr><th>지역</th><th>원문 평가 <span class="tag t-o">원문</span></th></tr>
+    <tr><td>미국 연방</td><td>하원 스테이블코인 법안이 1년 넘게 계류. 연방은 상대적으로 적대적</td></tr>
+    <tr><td>미국 주</td><td>NYDFS가 가장 앞섬(Circle에 BitLicense, Paxos 감독). 와이오밍·네브라스카도 유사 법안</td></tr>
+    <tr><td>EU</td><td>MiCA 통과, 레벨 2 작업 중. 유로 스테이블코인이 규제 하에 성장할 것으로 기대</td></tr>
+    <tr><td>버뮤다</td><td>완전등록제. 재보험 규제 방식 차용(제3자 수탁·감사·준비금)</td></tr>
+    <tr><td>일본</td><td>KYC 화이트리스트 방식이라 국내용에 갇힘. "과도하게 국내용으로 한정"이 가장 쉬운 실수</td></tr>
+    <tr><td>홍콩</td><td>2024년 초 프레임워크 완성 예상</td></tr>
+    <tr><td>싱가포르</td><td>기본 결제 라이선스 하에 스테이블코인 라이선스 발급</td></tr>
+  </table>
+  <div class="one">핵심: "규제 명확성"과 "글로벌 유통 가능성"이 둘 다 필요하다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">4 · 크립토 유로달러</div>
+  <h2>왜 "새로운 유로달러"인가</h2>
+  <div class="grid g2">
+    <div class="card"><h3>논리 <span class="tag t-o">원문</span></h3><ul>
+      <li>유로달러 = 미국 은행시스템 밖에 존재하는 달러(non-US dollars)</li>
+      <li>블록체인 스테이블코인도 미국 은행망 밖에서 도는 달러 → 구조가 닮음</li>
+      <li>수수료가 매우 낮고 빠른 비달러 청산 시스템. 국제무역·외환 문제 해결에 의미</li></ul></div>
+    <div class="card"><h3>같은 점과 다른 점</h3><ul>
+      <li><span class="tag t-b">보강</span> "유로"는 지금은 지리적 의미가 없다. 1950년대 유럽 은행에 예치된 달러에서 유래(웹 미확인)</li>
+      <li><span class="tag t-b">보강</span> 전통 유로달러는 은행 부채(예금)라 신용창조가 있다. 스테이블코인은 1:1 준비금이라 신용창조가 없다. 대신 준비금이 국채 수요가 된다</li></ul></div>
+  </div>
+  <div class="one">핵심: 스테이블코인은 신용 없는 유로달러, 곧 24시간 돌아가는 달러 청산망이다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">5 · PYUSD</div>
+  <h2>페이팔은 왜 발행을 Paxos에 맡겼나</h2>
+  <div class="grid g2">
+    <div class="card"><h3>구조 <span class="tag t-o">원문</span></h3><ul>
+      <li>발행: Paxos(뉴욕주 한정목적 신탁회사). 유통·앱 통합: 페이팔</li>
+      <li>페이팔은 라이선스부터 새로 받으면 2년이 걸린다. Paxos는 NYDFS 라이선스, 월가 은행 제휴, 준비금 문제 없는 실적 보유</li>
+      <li>준비금 이자는 페이팔과 Paxos가 나눈다</li></ul></div>
+    <div class="card"><h3>탄생 배경 <span class="tag t-o">원문</span></h3><ul>
+      <li>벤모 인수 후 기술 스택이 달라 앱 간 송금에 은행 거래가 필요했다 → PYUSD로 상호운용 해결</li>
+      <li>준비에 3년 이상, 대부분 기술이 아니라 미국 규제 문제 해결에 썼다</li>
+      <li>"머니 레고": 페이팔 → 바하마 결제앱 Cinco 지갑 → 선불 비자카드 충전</li></ul></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>그 후 <span class="tag t-u">업데이트</span></h3><ul>
+    <li>2026.3 시총 약 41억 달러(전년 대비 약 680%↑) → Q2에 약 27억 달러로 3월 고점 대비 31% 감소. 점유율은 1%대</li>
+    <li>2025.4부터 보유 사용자에게 연 3.7~4% 보상. 재원은 준비금 국채 이자. 이 구조가 GENIUS Act 이자 금지의 우회 논쟁과 맞닿는다</li></ul></div>
+  <div class="one">핵심: 규제 인프라를 이미 가진 발행 전문사에 맡기는 것이 가장 빠른 길이었다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">6 · 규제 6원칙</div>
+  <h2>좋은 스테이블코인 규제의 조건 <span class="tag t-o">원문</span></h2>
+  <div class="grid g3">
+    <div class="card"><h3>① 감독 권한</h3><p>검사·장부 조사·집행 권한. FTX 같은 사태 방지</p></div>
+    <div class="card"><h3>② 명확성</h3><p>규칙이 명확할수록 진입이 빠르다</p></div>
+    <div class="card"><h3>③ 단순성</h3><p>크립토 담보·알고리즘형 실패는 복잡성 때문</p></div>
+    <div class="card"><h3>④ 객관적 감사</h3><p>소비자 신뢰가 뱅크런 방지. SVB 때 USDC 디페깅은 신뢰 문제</p></div>
+    <div class="card"><h3>⑤ 준비자산 보관</h3><p>레버리지·대출·담보 금지. "재미없는 사업이어야 한다"</p></div>
+    <div class="card"><h3>⑥ 현지 실체</h3><p>카리브에 숨은 테더식 모델은 지속 불가능</p></div>
+  </div>
+  <div class="one">핵심: 기술이 아니라 준비금·감사·감독이 신뢰를 만든다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">7 · CBDC와 스테이블코인</div>
+  <h2>경쟁이 아니라 공존</h2>
+  <div class="grid g2">
+    <div class="card"><h3>성격 차이 <span class="tag t-o">원문</span></h3><ul>
+      <li>CBDC: 정부 발행 공공재, 지역 통제, 블록체인이 필수 아님</li>
+      <li>스테이블코인: 민간 발행 글로벌 자산, 퍼블릭 체인에서 이동이 쉬움</li></ul></div>
+    <div class="card"><h3>공존 모델 <span class="tag t-o">원문</span></h3><ul>
+      <li>CBDC·e머니가 스테이블코인의 준비자산이 된다 → 현지 통제력 유지 + 글로벌 유통</li>
+      <li>경쟁으로 보면 시나리오는 둘뿐: CBDC 성공 아니면 자국 통화 약화</li>
+      <li>달러 스테이블코인 지배 시 준비 안 된 나라는 달러화(dollarization) 위험</li>
+      <li>먼저 움직이는 쪽이 이긴다. 바하마 CBDC는 설계 문제로 외면받은 교훈</li></ul></div>
+  </div>
+  <div class="one">핵심: 통화주권의 방어선은 "CBDC로 막는 것"이 아니라 "자국 통화를 스테이블코인 레일에 태우는 것"이라는 주장이다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">8 · 2023년 이후 ① 미국</div>
+  <h2>GENIUS Act: 연방 프레임워크가 생겼다 <span class="tag t-u">업데이트</span></h2>
+  <div class="grid g2">
+    <div class="card"><h3>내용</h3><ul>
+      <li>2025.7.18 서명(상원 6.17, 하원 7.17 통과). 미국 최초의 연방 스테이블코인 법</li>
+      <li>발행 경로 3가지: 은행 자회사 / 연방 라이선스 / 주 라이선스(연방과 실질적 유사해야 인정)</li>
+      <li>준비금: 달러·은행 예금·단기 국채 등 고유동성 자산으로 최소 1:1</li>
+      <li>월별 준비금 공시, 은행비밀법(BSA) 적용, 비금융 기업 발행 원칙적 금지</li>
+      <li>발행사의 이자 직접 지급 금지. 제3자·계열사 우회는 법에 없어 최대 쟁점</li></ul></div>
+    <div class="card"><h3>시행</h3><ul>
+      <li>OCC 최종 규칙 2026.10.21 발표(Bulletin 2026-50), 시행일 2027.1.18</li>
+      <li>발행사 자본 하한 500만 달러</li>
+      <li>최종 규칙은 제3자 보상 위반 추정을 삭제했지만 기존 프로그램을 grandfather 하지는 않음</li>
+      <li>BSA·제재 규칙은 별도 제정</li>
+      <li>CLARITY Act(시장구조법): 상원 은행위 2026.5 통과(15–9)했으나 2026.9.15 상원 절차 투표 49–50 부결. 계류 중</li></ul></div>
+  </div>
+  <div class="one">원문의 "연방 입법은 어렵다"는 전망은 빗나갔다. 단, 이자(보상) 문제는 아직 정리되지 않았다.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">8 · 2023년 이후 ② 홍콩 · 테더 · 유럽</div>
+  <h2>원문 전망 점검 <span class="tag t-u">업데이트</span></h2>
+  <div class="grid g3">
+    <div class="card"><h3>홍콩</h3><ul>
+      <li>원문 예상은 2024년 초. 실제 조례 통과 2025.5.21, 시행 2025.8.1</li>
+      <li>홍콩 법인(또는 홍콩 거점 외국 인가기관), 납입자본 2,500만 HKD 이상</li>
+      <li>HKD 연동 코인은 해외 발행도 라이선스 필요. 리테일은 라이선스 발행사 코인만</li>
+      <li>2026.4.10 신청 36건 중 Anchorpoint(스탠다드차타드·HKT·Animoca)와 HSBC가 첫 라이선스</li>
+      <li>2026.8.12 HKDAP 기관·전문투자자 대상 베타 시작, 리테일은 빠르면 2026년 말 목표</li></ul></div>
+    <div class="card"><h3>테더</h3><ul>
+      <li>이원 전략: 2026.1.27 미국용 USAT 출시(발행 Anchorage Digital Bank, 준비금 수탁 Cantor Fitzgerald, 미국 법인 CEO Bo Hines)</li>
+      <li>USDT는 오프쇼어로 유지, "GENIUS 준수를 향해 진행 중"이라는 입장</li>
+      <li>JPMorgan 등은 USDT 준비금에 비트코인·금이 포함된 점을 문제 제기</li></ul></div>
+    <div class="card"><h3>유럽(MiCA)</h3><ul>
+      <li>테더는 EURT를 종료했고 USDT는 EU 규제 거래소에서 상장폐지</li>
+      <li>Circle의 EURC가 유로 스테이블코인의 약 41~50%</li>
+      <li>그러나 유로 스테이블코인은 전체의 1% 미만 → 원문의 "달러 비중 하락" 기대는 아직 실현되지 않음</li></ul></div>
+  </div>
+  <div class="one">종합: 맞은 예측 = 연방 입법, MiCA의 준수 발행사 우대. 어긋난 예측 = 홍콩 시기, 달러 비중 하락, 테더의 카리브 잔류.</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">예상 Q&amp;A ①</div>
+  <h2>발표 중 나올 수 있는 질문</h2>
+  <div class="qa"><div class="q">Q. 왜 스테이블코인을 "새로운 유로달러"라고 부르나?</div>
+    <p><span class="tag t-o">원문</span> 미국 은행망 밖에서 퍼블릭 체인 위를 도는 달러라는 구조가 같고, 국제무역·외환·청산 문제에 쓰인다. 차이: 전통 유로달러는 은행 부채라 신용창조가 있지만 스테이블코인은 1:1 준비금이라 없다. 대신 준비금이 국채 수요가 된다.</p></div>
+  <div class="qa"><div class="q">Q. 달러 스테이블코인이 다른 나라 통화주권에 주는 위협은?</div>
+    <p><span class="tag t-o">원문</span> 준비 안 된 나라에서 국민이 달러 스테이블코인을 더 선호하면 달러화가 진행된다. 일본식 국내 한정은 유동성이 없어 외면받는다. 대응은 자국 CBDC·e머니를 준비자산으로 쓰는 공존 모델과 빠른 진입.<br>
+    <span class="tag t-u">업데이트</span> USDT·USDC가 시장의 83% 안팎을 차지하는 구조가 유지되고 있어 위협론을 뒷받침한다.<br>
+    <span class="tag t-b">보강</span> 반론: 각국이 진입을 허가제로 막을 수 있다. 다만 원문은 이 방식이 글로벌 경쟁력을 잃는다고 본다.</p></div>
+  <div class="qa"><div class="q">Q. 발표자는 중립적인가?</div>
+    <p>Campbell은 전 Paxos CRO로 스테이블코인 사업에 이해관계가 있다. PYUSD 사례도 Paxos 입장에서 설명하며, CBDC 회의론과 스테이블코인 옹호가 기본 색깔이다. (자료 작성자의 해석)</p></div>
+  <div class="qa"><div class="q">Q. 원문 예측 중 맞은 것과 틀린 것은?</div>
+    <p><span class="tag t-u">업데이트</span> 맞음: 연방 입법 통과(GENIUS), MiCA가 준수 발행사에 유리하게 작동(USDC·EURC 수혜, USDT 퇴출). 어긋남: 홍콩은 2024년 초가 아니라 2025.8 시행, 유로 스테이블코인의 달러 비중 잠식은 미실현, 테더는 카리브에 남는 대신 USAT로 미국 진출.</p></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">예상 Q&amp;A ②</div>
+  <h2>인접 개념과 반론</h2>
+  <div class="qa"><div class="q">Q. 페이팔은 왜 직접 발행하지 않았나?</div>
+    <p><span class="tag t-o">원문</span> 라이선스부터 받으면 2년이 걸리고, Paxos는 NYDFS 라이선스·월가 은행 제휴·준비금 문제 없는 실적이 있다. 남의 돈을 다루는 책임을 중시하는 회사라 아웃소싱이 쉬웠다. 준비금 이자는 두 회사가 나눈다.</p></div>
+  <div class="qa"><div class="q">Q. GENIUS Act와 NYDFS 같은 주 체제는 충돌하나?</div>
+    <p><span class="tag t-u">업데이트</span> 주 체제도 연방과 실질적으로 유사하다고 인정받으면 주 라이선스 경로로 유지된다. 원문은 "미국의 글로벌 표준은 단기에 어렵다"고 봤지만 연방–주 이중 구조로 정리됐다.</p></div>
+  <div class="qa"><div class="q">Q. 스테이블코인이 이자를 줘도 되나?</div>
+    <p><span class="tag t-o">원문</span> Campbell은 의회에서 이자 허용을 촉구했다. 이자가 없으면 전통 상품보다 불리해지고 토큰화 예금이 일반 예금보다 불리한 이상한 상황이 생긴다는 논리.<br>
+    <span class="tag t-u">업데이트</span> GENIUS는 발행사 직접 이자만 금지했고, 플랫폼 보상은 CLARITY Act에서 은행권(예금 이탈 우려)과 크립토업계(활동 기반 보상 허용 주장)가 맞붙었다. 입법 정리는 아직이다.</p></div>
+  <div class="qa"><div class="q">Q. 스테이블코인 보유자는 안전한가? (SVB·BUSD)</div>
+    <p><span class="tag t-o">원문</span> SVB 때 USDC 디페깅은 전통 금융 불확실성이 번진 것이고, 감사와 신뢰가 뱅크런 방지의 핵심. BUSD는 대규모 상환에도 준비금 문제가 없었다.<br>
+    <span class="tag t-u">업데이트</span> 다만 보유자는 보험 가입 예금자가 아니라 발행사의 채권자 지위다. 준비금 규정은 부족분 위험을 줄일 뿐이다(법률 해석은 단정 금지).</p></div>
+  <div class="qa"><div class="q">Q. 테더(USDT)는 미국에서 결국 퇴출되나?</div>
+    <p>단정할 수 없다. 테더는 USDT도 GENIUS 준수를 향해 진행 중이라 밝혔고, 외국 발행사 인정 기준은 재무부가 정한다. 확인된 것은 USAT 출시와 USDT 오프쇼어 유지뿐이다.</p></div>
+  <div class="qa"><div class="q">Q. 일본·싱가포르는 2023 이후 어떻게 됐나?</div>
+    <p>본 자료에서는 조사하지 않았다. 원문 기준(일본: KYC 화이트리스트로 국내용 한정, 싱가포르: 기존 결제 라이선스 확장)까지만 다룬다. 홍콩은 라이선스제이며 첫 코인(HKDAP)이 기관 대상으로 시작한 점이 "국내용 한정 경고"와 비교된다.</p></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">출처</div>
+  <h2>참고자료</h2>
+  <ul class="src" style="font-size:14px;list-style:none;padding:0">
+    <li>쟁글, 「CBDC와 스테이블코인: 한국은행, Circle, Paxos의 인사이트」 — <a href="https://xangle.io/research/detail/1715">xangle.io/research/detail/1715</a></li>
+    <li>GENIUS Act 개요 — <a href="https://insightplus.bakermckenzie.com/bm/banking-finance_1/united-states-the-genius-act-a-new-federal-framework-for-stablecoin-issuers-custodians-and-banks">Baker McKenzie</a>, <a href="https://www.mofo.com/resources/insights/250721-the-genius-act-a-new-federal-regulatory">Morrison Foerster</a></li>
+    <li>OCC 최종 규칙 — <a href="https://occ.treas.gov/news-issuances/bulletins/2026/bulletin-2026-50.html">OCC Bulletin 2026-50</a>, <a href="https://cryptobriefing.com/occ-final-rule-genius-act-stablecoins/">Crypto Briefing</a></li>
+    <li>CLARITY Act 상원 부결 — <a href="https://pro.edgex.exchange/en-US/news/article/clarity-act-fails-senate-stablecoin-yield-split">Cryptofront</a></li>
+    <li>홍콩 — <a href="https://www.davispolk.com/insights/client-update/hong-kong-s-licensing-and-regulatory-framework-stablecoins-now-effect">Davis Polk</a>, <a href="https://thedefiant.io/hsbc-and-standard-chartered-win-hong-kong-s-inaugural-stablecoin-licenses">The Defiant</a>, <a href="https://theblock.co/news/business/2026-08-12-standard-chartered-anchorpoint-hkdap-stablecoin-rollout-411575">The Block</a></li>
+    <li>테더 USAT — <a href="https://decrypt.co/356045/tether-launches-us-regulated-stablecoin-issued-anchorage-digital">Decrypt</a></li>
+    <li>시장 현황 — <a href="https://transak.com/blog/stablecoin-market-cap-2026">Transak</a> / PYUSD — <a href="https://stablecoininsider.org/pyusd-q1-2026-stablecoin-report/">Stablecoin Insider</a> / EURC·MiCA — <a href="https://stablecoininsider.org/eurc-q1-2026-stablecoin-report/">Stablecoin Insider</a></li>
+  </ul>
+  <p class="src">수치는 집계처마다 차이가 있으며, 법률 해석은 단정하지 않았습니다.</p>
+</section>
+
+</div>
+<div class="nav"><button id="prev">◀</button><span id="pos"></span><button id="next">▶</button></div>
+<script>
+(function(){
+  var s=[].slice.call(document.querySelectorAll('.slide')),i=0;
+  function show(n){i=Math.max(0,Math.min(s.length-1,n));s.forEach(function(e,k){e.classList.toggle('active',k===i)});document.getElementById('pos').textContent=(i+1)+' / '+s.length;}
+  document.getElementById('prev').onclick=function(){show(i-1)};
+  document.getElementById('next').onclick=function(){show(i+1)};
+  document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key===' ')show(i+1);if(e.key==='ArrowLeft')show(i-1);});
+  show(0);
+})();
+</script>
+</body>
+</html>
